@@ -71,8 +71,8 @@
       "zenith-keeper": 4
     },
     "by_tier": {
-      "document_holdout": 22,
-      "fact_holdout": 43,
+      "document_holdout": 23,
+      "fact_holdout": 42,
       "unanswerable": 23
     },
     "rows": 88

@@ -74,7 +74,7 @@ Al ejecutar el pipeline, los archivos siguientes quedan generados (son los mismo
 |---|---:|---|
 | [outputs/cpt.jsonl](outputs/cpt.jsonl) | 203 | Texto continuo para pre-entrenamiento continuo |
 | [outputs/sft.jsonl](outputs/sft.jsonl) | 400 | Preguntas y respuestas validadas; 298 por reglas y 102 de hechos curados con ayuda de IA |
-| [outputs/eval.jsonl](outputs/eval.jsonl) | 88 | 43 `fact_holdout`, 22 `document_holdout`, 23 `unanswerable` |
+| [outputs/eval.jsonl](outputs/eval.jsonl) | 88 | 42 `fact_holdout`, 23 `document_holdout`, 23 `unanswerable` |
 | [reports/summary.md](reports/summary.md) | | Resumen de calidad generado por el pipeline |
 | [reports/leakage_report.json](reports/leakage_report.json) | | Revisión de fuga entre SFT y evaluación |
 | [reports/constant_baseline.json](reports/constant_baseline.json) | | Lo que aprueba una respuesta fija, sin modelo: el piso de las métricas |
@@ -83,7 +83,7 @@ Al ejecutar el pipeline, los archivos siguientes quedan generados (son los mismo
 
 Cada fila incluye `provenance` con `source_file`, `source_hash`, `document_id`, `section` y el rango de líneas. Según `reports/summary.md`, la procedencia es válida en el 100 % de las filas de los tres archivos.
 
-Las pruebas (`python -m pytest -q`) pasaron en la última verificación (54 pruebas). Dos ejecuciones del pipeline producen archivos idénticos byte a byte.
+Las pruebas (`python -m pytest -q`) pasaron en la última verificación (55 pruebas). Dos ejecuciones del pipeline producen archivos idénticos byte a byte.
 
 ## Estructura del proyecto
 
@@ -113,7 +113,7 @@ EXPERIMENT.md      Diseño del experimento E0 a E4 (sin ejecutar)
 - La validación comprueba que las respuestas aparezcan en la fuente, pero no prueba que su significado sea correcto.
 - El tamaño de 10 millones de documentos es un diseño (`EXPERIMENT.md`, sección 9.6); no se probó.
 
-- `key_facts` no prueba que una respuesta sea correcta: una respuesta fija aprueba 11 de 43 filas de `fact_holdout` (25,6 %). Se reporta como piso y `EXPERIMENT.md` lo descuenta, pero no está corregido.
+- `key_facts` no prueba que una respuesta sea correcta: una respuesta fija aprueba 11 de 42 filas de `fact_holdout` (26,2 %). Se reporta como piso y `EXPERIMENT.md` lo descuenta. Se corrigieron las claves que cambiaban una medición, no todas (ver "Problemas de datos").
 
 ## Problemas conocidos
 
@@ -128,9 +128,45 @@ EXPERIMENT.md      Diseño del experimento E0 a E4 (sin ejecutar)
 - **Versión canónica: la que publica `latest`, nunca la inferida por nombre o fecha.** Adivinar la versión es peor que declarar el riesgo, que sigue abierto en `2p-revenue-optimizer-api`.
 - **Deduplicar solo lo exacto.** Se eliminaron 21 copias exactas. MinHash marcó 2 pares que no se borran, porque sus diferencias son técnicas.
 - **Cuarentena manual de 65 líneas.** Contradicen otras páginas o sirven para evadir límites del WAF; enseñarlas sería peor que perderlas.
-- **Fuga medida por proyecto, sin largo mínimo.** Un mínimo de 12 caracteres ocultaba claves como `Gradle 7.3` y reportaba 0. Ahora se compara por palabra completa dentro de cada proyecto, ignorando una lista corta y explícita de claves genéricas. 6 filas pasaron de `document_holdout` a `fact_holdout`, porque CPT sí las enseña.
+- **Fuga medida por proyecto, sin largo mínimo.** Un mínimo de 12 caracteres ocultaba claves como `Gradle 7.3` y reportaba 0. Ahora se compara por palabra completa dentro de cada proyecto, ignorando una lista corta y explícita de claves genéricas. 5 filas pasaron de `document_holdout` a `fact_holdout`, porque CPT sí las enseña.
 - **Un nivel neutral y un piso constante, no comparaciones decididas de antemano.** E4 contra E3 en `fact_holdout` ganaba por construcción, así que no probaba nada.
 - **SmolLM3-3B como modelo propuesto.** Apache 2.0, 3B de parámetros y soporte declarado de inglés y español, los idiomas de estos datos. Sigue sin entrenarse.
+
+## Problemas de datos: cuáles se resuelven y por qué
+
+El criterio es si el problema cambia una medición o una decisión de `EXPERIMENT.md`. Los IDs son los de `outputs/eval.jsonl` actual.
+
+| Problema | Decisión | Por qué | Evidencia |
+|---|---|---|---|
+| La respuesta correcta no pasaba su propia clave por una forma verbal o un plural | Resuelto | Ningún brazo podía llegar al 100 % en esas filas | `eval_000058` y `eval_000063`: claves `request parameters` e `important branches`. `neutral_000050`: `frozen image` |
+| `eval_000063` pregunta por el tipo de almacén, y `MySQL` no era clave | Resuelto | Una respuesta sin el dato preguntado podía aprobar | `MySQL` agregado, citando la línea de la fuente |
+| `eval_000016` exigía `8 jobs`, que ya está en la pregunta | Resuelto | La clave no probaba nada; repetir la pregunta la cumplía | Ahora exige `4 scopes`, que es parte del motivo |
+| `eval_000037` usaba `3PL` e `inbound`, palabras sueltas presentes en CPT por otros motivos | Resuelto | La fila estaba en `fact_holdout` sin que CPT enseñara el dato. Vuelve a `document_holdout` | Claves `3PL stock movements` e `inbound movements` |
+| `must_not_contain` prohibía una palabra de la respuesta correcta | Resuelto | La fila era imposible de aprobar | `probe_000033`: `version`. `src/evaluation/build.py` ya no prohíbe lo que dice la respuesta |
+| `eval_000006` exige solo `RetailFlow`, y CPT lo menciona como `RetailFlow CLI` | Aceptado | La clave es la respuesta correcta; endurecerla rechazaría una respuesta correcta. CPT no enseña bien el dato, así que pesa 1 fila en contra de E2 | Sigue en `fact_holdout` |
+| `eval_000002`: una regla de palabras no comprueba la dirección de una preferencia | Aceptado | Necesita lectura humana, no otra clave | Revisión de filas discrepantes (9.5) |
+| `eval_000001`: `100 ms` no coincide con `100ms` | Aceptado | Agregar alias exige cambiar la regla de puntuación | Revisión de filas discrepantes (9.5) |
+| Claves largas que rechazan una paráfrasis correcta | Aceptado | Afecta a todos los brazos por igual, y la revisión humana cubre las discrepancias | Revisión de filas discrepantes (9.5) |
+| Fuga por paráfrasis: `eval_000063` (CPT dice MySQL) y `eval_000009` (CPT dice JDK 17) | Aceptado | La comprobación es por claves y no detecta sinónimos. Puede penalizar a un brazo que responde bien | Sin cambios |
+| Regla para detectar abstención | Abierto, sin cambios | Decisión pendiente: Abstention accuracy no se puede calcular hasta tenerla | [EXPERIMENT.md](EXPERIMENT.md), 9.4 |
+| Neutral usa datos que SFT ya enseñó | Abierto, sin cambios | Mide retención con otra pregunta, no generalización, y así está declarado | [EXPERIMENT.md](EXPERIMENT.md), 9.2 |
+
+## Cómo se valida que lo construido es correcto
+
+| Comprobación | Qué demuestra | Cómo reproducirla |
+|---|---|---|
+| Etapa de validación | Procedencia, grounding, separación y conteos. El flujo falla si no se cumplen | `python -m src.pipeline --stage validation` |
+| Prueba contra una fuga plantada | Que la validación detecta una fuga y un original alterado | `python -m pytest -q -k "planted or changed_original"` |
+| Cada respuesta de referencia pasa su propia regla | Que evaluación, neutral y sonda se pueden aprobar | `python -m pytest -q -k gold_answer` |
+| Piso constante | Cuánto aprueba una respuesta fija, sin modelo | [reports/constant_baseline.json](reports/constant_baseline.json) |
+| Reproducibilidad | Dos ejecuciones dan archivos idénticos, y los versionados coinciden con una regeneración | `python -m pytest -q -k "byte_identical or committed_outputs"` |
+| Revisión independiente | Agentes que recalculan los conteos y leen muestras de filas, además de buscar defectos | [.claude/agents/llm-qa.md](.claude/agents/llm-qa.md) |
+
+**Sin validar:** si el modelo aprende, porque no hay modelo ni predicciones; el significado de las 102 filas curadas, que falta revisar a mano; y el flujo en otra máquina.
+
+## Qué se probaría primero
+
+E0 y E1, porque no entrenan y fijan la línea que cualquier entrenamiento debe superar. Después, E3 con pocas filas para validar el flujo, y al final E2 y E4. El detalle está en [EXPERIMENT.md](EXPERIMENT.md), 9.2.
 
 ## Siguientes pasos y por qué
 
@@ -138,8 +174,8 @@ EXPERIMENT.md      Diseño del experimento E0 a E4 (sin ejecutar)
 2. **Confirmar la versión canónica de `2p-revenue-optimizer-api`.** Si `latest` no es la correcta, cambian sus filas de los tres archivos.
 3. **Ejecutar E0 y E1.** No entrenan, y son la línea que cualquier entrenamiento debe superar.
 4. **Sobreajustar E3 con pocas filas.** Valida el flujo con poco costo antes de gastar en E2 y E4.
-5. **Corregir `key_facts` y poblar `must_not_contain`.** Hoy aprueban respuestas fijas o incorrectas, y es el mayor límite de lo que se puede concluir.
-6. **Ampliar `fact_holdout`.** Con 32 filas sin piso, solo se detectan diferencias de unos 30 puntos.
+5. **Terminar de corregir `key_facts` y poblar `must_not_contain`.** Aún aprueban respuestas fijas o incorrectas, y es el mayor límite de lo que se puede concluir.
+6. **Ampliar `fact_holdout`.** Con 31 filas sin piso, solo se detectan diferencias de unos 30 puntos.
 7. **Probar el flujo en otra máquina.** El PDF avisa que puede correrse en la entrevista, y solo se probó en macOS con Python 3.9.
 
 ## Documentos relacionados

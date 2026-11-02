@@ -24,7 +24,7 @@ La inspiración es [DeepSeek LLM](https://arxiv.org/abs/2401.02954) (arXiv 2401.
 
 ## 9.2 Experimentos y niveles que aplican
 
-| Brazo | Definición | `fact_holdout` (43) | `document_holdout` (22) | `unanswerable` (23) | Neutral (64) |
+| Brazo | Definición | `fact_holdout` (42) | `document_holdout` (23) | `unanswerable` (23) | Neutral (64) |
 |---|---|---|---|---|---|
 | E0 Base | Modelo sin adaptar | Línea base | Debe abstenerse | Debe abstenerse | Línea base |
 | E1 RAG | Base con recuperación | Debe responder | Debe responder | Debe abstenerse | Debe responder |
@@ -38,7 +38,7 @@ En `document_holdout`, 4 filas tienen `closed_book_expected_behavior: not_scored
 
 Índice de RAG: los 203 chunks de CPT **más los 24 de documentos retenidos**. Excluir esos documentos haría injusta la comparación. Los 28 chunks de versiones no canónicas solo entran con su versión como filtro.
 
-**E3 tendrá puntajes bajos en `fact_holdout` por diseño:** el conjunto excluye todo dato de SFT para evitar fuga, así que E3 nunca vio esas respuestas. Eso no prueba que SFT falle. Tampoco llegará a cero, porque el piso constante es 25,6 % (9.5). Para medir si E3 memorizó, usar `reports/sft_recall_probe.jsonl` (33 filas con redacción no vista de datos entrenados), que es **solo diagnóstico** y no forma parte de la evaluación sin fuga.
+**E3 tendrá puntajes bajos en `fact_holdout` por diseño:** el conjunto excluye todo dato de SFT para evitar fuga, así que E3 nunca vio esas respuestas. Eso no prueba que SFT falle. Tampoco llegará a cero, porque el piso constante es 26,2 % (9.5). Para medir si E3 memorizó, usar `reports/sft_recall_probe.jsonl` (33 filas con redacción no vista de datos entrenados), que es **solo diagnóstico** y no forma parte de la evaluación sin fuga.
 
 **Qué probar primero, de menor a mayor costo:** E0 y E1, que no entrenan. Después, sobreajustar E3 con pocas filas para validar el flujo con la sonda. Luego E2 y E4.
 
@@ -73,7 +73,7 @@ El modelo y la receta por brazo están en la sección 9.7.
 | Context relevance (RAG) | Chunks recuperados que contienen algún `key_fact` | Ruido del contexto |
 | Retrieval precision (RAG) | Chunks de evidencia en el top-K, dividido por K | Precisión de búsqueda |
 
-Límites estadísticos: el peor caso del intervalo de Wilson al 95 % es ±19 puntos con n=22 y n=23, ±14 con n=43, ±12 con n=64, ±23 con las 15 `answer_multi_source` y ±10 con las 88 totales. Solo se detectan diferencias grandes (ver potencia en 9.5). Usar pruebas pareadas por pregunta, y ninguna conclusión fina por proyecto.
+Límites estadísticos: el peor caso del intervalo de Wilson al 95 % es ±19 puntos con n=23, ±15 con n=42, ±12 con n=64, ±23 con las 15 `answer_multi_source` y ±10 con las 88 totales. Solo se detectan diferencias grandes (ver potencia en 9.5). Usar pruebas pareadas por pregunta, y ninguna conclusión fina por proyecto.
 
 **Limitación de `key_facts`, sin corregir en esta versión.** Comprobar que unas palabras aparezcan no prueba que la respuesta sea correcta: "application.yml has preference" aprueba una pregunta cuya respuesta correcta es la contraria, y `must_not_contain` está vacío en las filas con respuesta. Las reglas de 9.5 lo compensan con un piso constante y con revisión manual, pero no lo eliminan.
 
@@ -85,8 +85,8 @@ Los umbrales son **criterios iniciales**, fijados antes de ver resultados. Ning�
 
 | Conjunto | Filas | Aprobadas por la respuesta constante | Filas sin piso |
 |---|---:|---:|---:|
-| `fact_holdout` | 43 | 11 (25,6 %) | 32 |
-| `document_holdout` | 22 | 0 (0 %) | 22 |
+| `fact_holdout` | 42 | 11 (26,2 %) | 31 |
+| `document_holdout` | 23 | 0 (0 %) | 23 |
 | Neutral | 64 | 0 (0 %, excluidas por construcción) | 64 |
 | `sft_recall_probe` | 33 | 14 (42,4 %) | 19 |
 
@@ -104,7 +104,7 @@ Una ganancia de 1 a 14 puntos no se declara ganadora: queda "no concluyente" o "
 
 | Comparación | Conjunto (n) | Efecto mínimo | Gana | No concluyente | Pierde |
 |---|---|---:|---|---|---|
-| E2 contra E0 | `fact_holdout` sin piso (32) | 30 | CPT enseña datos: seguir con E4 | Ampliar el conjunto antes de decidir | Revisar calidad y cantidad del corpus antes de entrenar más |
+| E2 contra E0 | `fact_holdout` sin piso (31) | 30 | CPT enseña datos: seguir con E4 | Ampliar el conjunto antes de decidir | Revisar calidad y cantidad del corpus antes de entrenar más |
 | E4 contra E3 | Neutral (64) | 25 | Se justifica el costo de CPT | Quedarse con E3, que es más simple, sin afirmar que CPT no sirve | Eliminar CPT |
 | E4 contra E1 | Neutral (64) | 25 | Vale entrenar para responder sin recuperar | Quedarse con E1, que no entrena | Priorizar RAG; fine-tuning solo para la conducta |
 
@@ -112,8 +112,8 @@ Controles de un solo brazo, que no entran en la corrección múltiple:
 
 | Resultado | Siguiente decisión |
 |---|---|
-| E1 acierta 16 o más de 22 en `document_holdout` (límite inferior de Wilson ≥ 50 %) | RAG responde en documentos no vistos |
-| E1 acierta 6 o menos de 22 (límite superior de Wilson < 50 %) | RAG falla: revisar antes de compararlo |
+| E1 acierta 17 o más de 23 en `document_holdout` (límite inferior de Wilson ≥ 50 %) | RAG responde en documentos no vistos |
+| E1 acierta 6 o menos de 23 (límite superior de Wilson < 50 %) | RAG falla: revisar antes de compararlo |
 | Recall@5 de E1 menor a 80 % | Mejorar el recuperador antes de culpar al modelo |
 | E3 acierta 80 % o más en las 19 filas de la sonda sin piso, pero falla en abstención | Reforzar las filas de abstención |
 | E3 no supera el 50 % en esas 19 filas | El flujo o los datos fallan; detener y depurar |
@@ -124,6 +124,8 @@ Se eliminaron dos reglas sesgadas: E4 contra E3 en `fact_holdout`, que solo tien
 
 **Potencia** (McNemar exacto, bilateral, calculada, no medida). δ = p10 − p01. Supuesto: discordancia en contra p01, la tasa con la que el mejor brazo pierde una fila que el otro acierta. No hay datos para estimarla, así que se muestran 0, 5 y 10 %. Las filas de una misma plantilla o proyecto no son independientes: la potencia real puede ser menor.
 
+**Tabla sin recalcular.** Se calculó con n=43, 32 y 22. Tras corregir las claves, esos conjuntos tienen 42, 31 y 23 filas, y el repositorio no incluye el script para recalcularla: las filas de esos tres tamaños son aproximaciones. La fila de neutral sigue vigente.
+
 | n (α = 0,0167) | δ = 15 | δ = 20 | δ = 25 | δ = 30 | δ = 40 | δ con 80 % de potencia |
 |---:|---|---|---|---|---|---|
 | 64 (neutral) | 86/42/28 % | 98/67/50 % | 100/85/70 % | 100/94/85 % | 100/100/97 % | 14/24/29 |
@@ -131,7 +133,7 @@ Se eliminaron dos reglas sesgadas: E4 contra E3 en `fact_holdout`, que solo tien
 | 32 (`fact_holdout` sin piso) | 19/14/10 % | 46/26/18 % | 72/42/30 % | 89/57/43 % | 99/82/67 % | 27/39/47 |
 | 22 (`document_holdout`) | 4/5/5 % | 13/13/10 % | 30/22/16 % | 51/33/24 % | 84/56/44 % | 39/52/61 |
 
-**Qué se puede detectar.** Neutral detecta 25 puntos si la discordancia en contra es de hasta unos 5 %. `fact_holdout` sin piso solo detecta con holgura 30 puntos si E0 casi nunca gana a E2, lo que es plausible porque E0 no conoce estos servicios ficticios; con 5 % en contra, la potencia baja a 57 %. `document_holdout` no sirve para comparar brazos entre sí, y por eso solo tiene un umbral absoluto: con esa regla, E1 pasa con probabilidad 49 % si su acierto real es 70 %, y 87 % si es 80 %. Para 15 puntos con 80 % de potencia harían falta entre 59 y 168 filas por comparación, según la discordancia (α = 0,0167); 20 puntos, entre 44 y 107. Son más filas de las que tiene `fact_holdout`, y ampliarlo es el siguiente paso si estas zonas dejan todo como no concluyente.
+**Qué se puede detectar.** Neutral detecta 25 puntos si la discordancia en contra es de hasta unos 5 %. `fact_holdout` sin piso solo detecta con holgura 30 puntos si E0 casi nunca gana a E2, lo que es plausible porque E0 no conoce estos servicios ficticios; con 5 % en contra, la potencia baja a 57 %. `document_holdout` no sirve para comparar brazos entre sí, y por eso solo tiene un umbral absoluto: con esa regla, E1 pasa con probabilidad 44 % si su acierto real es 70 %, y 84 % si es 80 % (binomial con 17 de 23). Para 15 puntos con 80 % de potencia harían falta entre 59 y 168 filas por comparación, según la discordancia (α = 0,0167); 20 puntos, entre 44 y 107. Son más filas de las que tiene `fact_holdout`, y ampliarlo es el siguiente paso si estas zonas dejan todo como no concluyente.
 
 ## 9.6 Escalabilidad a 10 millones de documentos
 

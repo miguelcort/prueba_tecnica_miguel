@@ -5,8 +5,8 @@
     "document_holdout_answers_in_cpt": 0,
     "document_holdout_evidence_partly_trained": 4,
     "document_holdout_keys_only_in_other_project_cpt": 2,
-    "fact_holdout_answers_in_cpt_by_design": 43,
-    "fact_holdout_reassigned_from_document_holdout": 6,
+    "fact_holdout_answers_in_cpt_by_design": 42,
+    "fact_holdout_reassigned_from_document_holdout": 5,
     "question_exact_or_semantic_overlap_with_sft": 0,
     "question_high_jaccard_with_other_identifiers": 33,
     "sft_facts_in_eval": 0

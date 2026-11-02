@@ -28,7 +28,7 @@
       }
     },
     "document_holdout": {
-      "answerable_rows": 22,
+      "answerable_rows": 23,
       "floor_fact_ids": [],
       "passed": {
         "generic_only": 0,
@@ -42,7 +42,7 @@
       }
     },
     "fact_holdout": {
-      "answerable_rows": 43,
+      "answerable_rows": 42,
       "floor_fact_ids": [
         "fact_136cd6b1b108fc9b",
         "fact_3278146f2bc63fc7",
@@ -62,9 +62,9 @@
         "question_echo_plus_generic": 11
       },
       "passed_percent": {
-        "generic_only": 20.9,
-        "question_echo": 4.7,
-        "question_echo_plus_generic": 25.6
+        "generic_only": 21.4,
+        "question_echo": 4.8,
+        "question_echo_plus_generic": 26.2
       }
     },
     "neutral": {

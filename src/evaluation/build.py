@@ -48,7 +48,9 @@ def supporting_chunks(keys: List[str], chunks: Dict[str, str], generic: Iterable
 def _from_fact(fact: dict, tier: str, closed_book: str, siblings: List[dict], duplicates: Dict[str, List[str]], seed: int) -> dict:
     _, question, answer = render(fact, seed)
     own = {normalize_text(key) for key in fact["key_facts"]}
-    wrong = sorted({k for s in siblings if s["fact_id"] != fact["fact_id"] for k in s["key_facts"] if normalize_text(k) not in own and not any(normalize_text(k) in o for o in own)})
+    # A value the correct answer itself contains cannot mark an answer as wrong.
+    gold = normalize_text(answer)
+    wrong = sorted({k for s in siblings if s["fact_id"] != fact["fact_id"] for k in s["key_facts"] if normalize_text(k) not in own and not any(normalize_text(k) in o for o in own) and normalize_text(k) not in gold})
     provenance = from_fact(fact, duplicates)
     return {
         "question": question,

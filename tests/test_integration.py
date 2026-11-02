@@ -135,6 +135,21 @@ def test_eval_facts_never_appear_in_sft(built_project):
     assert {r["tier"] for r in evaluation} == {"document_holdout", "fact_holdout", "unanswerable"}
 
 
+def test_every_gold_answer_passes_its_own_factual_rule(built_project):
+    """The factual accuracy rule of EXPERIMENT.md 9.4, applied to expected_answer in every scored set."""
+    failures = []
+    for relative in ("outputs/eval.jsonl", "reports/neutral_eval.jsonl", "reports/sft_recall_probe.jsonl"):
+        for row in rows(built_project, relative):
+            if row["expected_answer"] is None:
+                continue
+            answer = normalize_text(row["expected_answer"])
+            missing = [key for key in row["key_facts"] if normalize_text(key) not in answer]
+            forbidden = [word for word in row["must_not_contain"] if normalize_text(word) in answer]
+            if missing or forbidden:
+                failures.append((row["id"], missing, forbidden))
+    assert not failures
+
+
 def test_recall_probe_is_labeled_and_kept_out_of_eval(built_project):
     probe = rows(built_project, "reports/sft_recall_probe.jsonl")
     assert probe and all(r["diagnostic_only"] for r in probe)

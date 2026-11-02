@@ -19,8 +19,8 @@ facts:
   kind: conceptual
   evidence: one for 3PL stock movements (smaller quantities) and another for inbound movements
   key_facts:
-  - 3PL
-  - inbound
+  - 3PL stock movements
+  - inbound movements
   answer: 'vendor-stockkeeper-api has two main restocking endpoints: one for 3PL stock movements, with smaller quantities, and another for inbound movements, which can contain larger quantities.'
   train_questions:
   - What are the two main ways to restock in vendor-stockkeeper-api?
@@ -1046,7 +1046,7 @@ multi_source:
   category: architecture
   sources:
   - {source_path: traffic-gate-api/latest/guide/README.md, evidence: ['Se tienen 4 posibles valores para el scope: front, api, pci, pci_global'], key_facts: [pci_global]}
-  - {source_path: traffic-gate-api/latest/guide/sections/arch.md, evidence: ['tiene configurados en RetailHub 8 jobs, dos por cada uno de los 4 scopes'], key_facts: [8 jobs]}
+  - {source_path: traffic-gate-api/latest/guide/sections/arch.md, evidence: ['tiene configurados en RetailHub 8 jobs, dos por cada uno de los 4 scopes'], key_facts: [4 scopes]}
   answer: traffic-gate-api tiene 8 jobs porque hay dos por cada uno de sus 4 scopes (front, api, pci y pci_global).
   train_questions:
   - ¿Cómo se explica la cantidad de jobs de traffic-gate-api a partir de sus scopes?
@@ -1079,7 +1079,7 @@ multi_source:
   project: payment-promise-gateway
   category: architecture
   sources:
-  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Used for encapsulating request parameters'], key_facts: [encapsulating request parameters]}
+  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Used for encapsulating request parameters'], key_facts: [request parameters]}
   - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Requires LateFeeForgivenessProposalCommand for confirmation'], key_facts: [LateFeeForgivenessProposalCommand]}
   answer: In payment-promise-gateway, the Command pattern encapsulates request parameters, and confirming a forgiveness proposal applies it through LateFeeForgivenessProposalCommand on PUT /forgiveness_proposal.
   train_questions:
@@ -1124,8 +1124,8 @@ multi_source:
   project: order-workflow-api
   category: architecture
   sources:
-  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Protect the important branches'], key_facts: [Protect the important branches]}
-  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Workflow configuration (protected branches, releasable branches, etc.)'], key_facts: [Workflow configuration]}
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Protect the important branches'], key_facts: [important branches]}
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Workflow configuration (protected branches, releasable branches, etc.)'], key_facts: [MySQL, Workflow configuration]}
   answer: order-workflow-api protects the important branches, and the configuration saying which branches are protected or releasable is workflow configuration stored in its MySQL database.
   train_questions:
   - Where does order-workflow-api keep the information it needs to protect branches?
@@ -1157,7 +1157,7 @@ multi_source:
   project: demand-forecast-docs
   category: definition
   sources:
-  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Task-images** are frozen images of the code at the moment of creation'], key_facts: [frozen images]}
+  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Task-images** are frozen images of the code at the moment of creation'], key_facts: [frozen image]}
   - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Agendas**: agendas are regular executions of workflows or task-images'], key_facts: [cron expression]}
   answer: In demand-forecast-docs, an agenda schedules runs through a cron expression, and it can execute a task-image, which is a frozen image of the code at the moment of creation.
   train_questions:
