@@ -1,0 +1,83 @@
+# Human decisions about the corpus, kept out of the code so they can be reviewed.
+# Paths are relative to the input folder. `pattern` or `range` selects the lines to blank.
+
+excluded_files:
+  - path: price-engine-api/latest/guide/contacto.md
+    reason: names of real-looking people; no technical knowledge
+  - path: catalog-portfolio-api/latest/guide/README.md
+    reason: documentation-site marketing with no knowledge of the service
+
+# Summaries of this spec are in English and its descriptions in Spanish; questions are Spanish.
+swagger_prefer_description: [traffic-gate-api]
+
+redactions:
+  - {label: username, pattern: 'jsanchez', replacement: '<username>'}
+  - {label: real_brand, pattern: "McDonald's|MCDONALDS", replacement: 'ExampleBrand'}
+  - {label: aws_console_link, pattern: '\(?[Vv]er en consola AWS\)?', replacement: ''}
+  - {label: slack_field, pattern: '\*\*Slack\*\*: \S+', replacement: '**Slack**: <slack-channel>'}
+
+lines:
+  # Same-version contradictions: we cannot tell which side is right, so neither enters training
+  # when it can be avoided. The side with stronger corroboration stays.
+  - path: catalog-portfolio-api/latest/guide/architecture/README.md
+    pattern: 'Java and Spark framework'
+    reason: says Spark while the technology table says Javalin
+  - path: catalog-portfolio-api/latest/guide/api-reference/README.md
+    pattern: '/catalog/brands/search'
+    reason: search path conflicts with GET / in brands.md
+  - path: catalog-portfolio-api/latest/guide/api-reference/README.md
+    range: [57, 73]
+    reason: "`data` response envelope conflicts with `results` in brands.md"
+  - path: catalog-portfolio-api/latest/guide/api-reference/README.md
+    pattern: 'All API endpoints require proper authentication'
+    reason: contradicted by unauthenticated curl examples; target page does not exist
+  - path: catalog-portfolio-api/latest/guide/api-reference/brands.md
+    pattern: 'validation_error'
+    reason: error code conflicts with validation_failed in two other pages
+  - path: catalog-portfolio-api/latest/guide/troubleshooting/README.md
+    range: [147, 147]
+    reason: illustrates authentication that other pages contradict
+  - path: traffic-gate-api/latest/guide/sections/database.md
+    pattern: 'notifica a trunks'
+    reason: names `trunks` where every other page says Vegeta
+  - path: traffic-gate-api/latest/guide/sections/database.md
+    pattern: 'global_pci'
+    reason: third spelling of the pci_global scope
+  - path: vendor-stockkeeper-api/latest/guide/important.md
+    range: [231, 232]
+    reason: says test_items while the payload and line 37 use test_item
+  - path: vendor-stockkeeper-api/latest/guide/important.md
+    pattern: "internal-api.techzone.com/items/.*include_attributes=all$"
+    reason: unterminated curl command
+  - path: demand-forecast-docs/latest/guide/overview.md
+    range: [101, 108]
+    reason: marketplace.pipes conflicts with app.pipes in the same page
+  # Decision on abuse potential: the per-scope criteria tell a reader which traits get a
+  # rate-limited IP whitelisted. The published limits and the mechanism stay; this does not.
+  - path: traffic-gate-api/latest/guide/README.md
+    pattern: 'La dirección IP|Si el usuario detrás de la dirección IP|se debe enviar a whitelist si cumple|SCOPE (FRONT|API|PCI)'
+    reason: whitelist criteria work as rate-limit evasion guidance
+  - path: traffic-gate-api/latest/guide/sections/processes.md
+    pattern: 'IsBot'
+    reason: lists the traits that get an IP whitelisted (rate-limit evasion guidance)
+
+# Facts that the extractors would find but that must not be trained on.
+fact_exclusions:
+  - project: zenith-keeper
+    subject: 'POST /api/v1/fresh-products/orders'
+    attribute: responses
+    reason: swagger says 400 while the sequence diagram says 404
+  - project: zenith-keeper
+    subject: 'POST /orders raises .*'
+    attribute: http_status
+    reason: sequence diagram says 404 while swagger says 400
+  - project: zenith-keeper
+    subject: '.*quatintyOfDays.*'
+    attribute: details
+    reason: parameter name typo that does not match the path template
+
+# Chunks containing this text are not rendered: the same claim conflicts between spec and diagram.
+chunk_exclusions:
+  - '`POST /orders` error handling'
+  - '`POST /api/v1/fresh-products/orders`:'
+spec_parameter_exclusions: [quatintyOfDays]

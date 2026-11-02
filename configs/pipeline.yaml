@@ -1,0 +1,64 @@
+# All paths are relative to the project root (the parent of this folder).
+paths:
+  raw_dir: docs_raw
+  processed_dir: work/processed
+  outputs_dir: outputs
+  reports_dir: reports
+  logs_dir: logs
+  checkpoint_dir: work/.checkpoints
+  quarantine: configs/quarantine.yaml
+  curated_facts: configs/curated_facts.yaml
+
+seed: 42
+
+runtime:
+  workers: 1        # >1 parallelizes per-document curation with multiprocessing
+  batch_size: 8     # documents handed to each worker at a time
+
+language:
+  spanish_projects: [price-engine-api, traffic-gate-api, unified-transaction-configs]
+
+curation:
+  max_fence_lines: 25       # longer fences are sample payloads, not knowledge
+  min_substantive_chars: 60 # below this, a page without technical signal is a stub
+  min_unique_line_ratio: 0.3
+
+deduplication:
+  shingle_words: 5
+  num_perm: 128
+  lsh_bands: 16
+  near_duplicate_threshold: 0.80  # documents; the sweep is in reports/deduplication_report.json
+  sweep_thresholds: [0.5, 0.6, 0.7, 0.8, 0.9, 0.95]
+  chunk_near_duplicate_threshold: 0.90
+  fragment_min_chars: 80    # shorter repeated paragraphs are headers, not content
+
+chunking:
+  max_chars: 1200
+  min_chars: 150
+  min_context_chars: 60     # shorter chunks need technical tokens to justify themselves
+  boilerplate_sections: [license, licencia, contributing]
+  overlap_chars: 150        # only when one section has to be split
+
+holdout:
+  min_project_documents: 3  # a project needs this many documents with facts to lose one
+  min_document_facts: 3
+
+sft:
+  questions_per_fact: 2
+  fact_holdout_fraction: 0.25
+  multi_source_eval_share: 2  # every Nth reasoning row per project goes to evaluation
+  recall_probe_fraction: 0.2  # diagnostic only, see reports/sft_recall_probe.jsonl
+  grounding_min_overlap: 0.5
+  impostors_per_project: 4
+  llm:
+    enabled: false  # also requires LLM_MODE=api, LLM_BASE_URL and LLM_MODEL in the environment
+    max_retries: 3
+
+evaluation:
+  max_items_per_holdout_document: 12
+  question_jaccard_threshold: 0.8  # with equal identifiers, above this two questions are one
+  answer_jaccard_threshold: 0.8
+  min_specific_key_chars: 12       # a shorter key alone (`int`) proves no overlap
+
+validation:
+  min_cpt_chars: 40

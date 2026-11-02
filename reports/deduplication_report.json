@@ -1,0 +1,220 @@
+{
+  "exact_duplicate_groups": [
+    {
+      "content_hash": "3d1153ff569e1b06905c0ad727e4afedb4f12fb068b12d02becc9b3940374418",
+      "cross_project": [],
+      "kept": "docs_raw/2p-revenue-optimizer-api/latest/guide/README.md",
+      "removed": [
+        "docs_raw/2p-revenue-optimizer-api/0.2.2/guide/README.md"
+      ]
+    },
+    {
+      "content_hash": "57088a5ddb2f58e1a04d09c6f85eed975e63245384471b34edfc40e0387772d6",
+      "cross_project": [],
+      "kept": "docs_raw/vendor-stockkeeper-api/latest/guide/alerts.md",
+      "removed": [
+        "docs_raw/vendor-stockkeeper-api/0.0.10-stock-consumer/guide/alerts.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.3-paused-seller/guide/alerts.md"
+      ]
+    },
+    {
+      "content_hash": "61e2efed1d2516a7d48a6a2da4a04fd615e0c1318348a9cc4ee8f40ab736af26",
+      "cross_project": [],
+      "kept": "docs_raw/vendor-stockkeeper-api/latest/guide/database.md",
+      "removed": [
+        "docs_raw/vendor-stockkeeper-api/0.0.10-stock-consumer/guide/database.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.3-paused-seller/guide/database.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.6-ep-restock-man/guide/database.md"
+      ]
+    },
+    {
+      "content_hash": "6d5753b998f864bf9867ef31e74c1683741d6d921304d11d6dc7831eaf9dd10d",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/setup/local-development.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/setup/local-development.md"
+      ]
+    },
+    {
+      "content_hash": "85e79841ac1ca2bbff14ee9ccf5cbc7b6522b575dffcf1e2cbe4898ff7124b92",
+      "cross_project": [],
+      "kept": "docs_raw/payment-promise-gateway/latest/guide/README.md",
+      "removed": [
+        "docs_raw/payment-promise-gateway/0.0.10-test-crc-migration/guide/README.md"
+      ]
+    },
+    {
+      "content_hash": "90580cd29e3afcd2936dfbd90a9589e3c4183af6d7bfa8c840f69b218cf31ac2",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/setup/README.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/setup/README.md"
+      ]
+    },
+    {
+      "content_hash": "941dd8e891ded40954b9c022d7b27e4c4fe465b9f79b4195287f3ea532b04393",
+      "cross_project": [],
+      "kept": "docs_raw/vendor-stockkeeper-api/latest/guide/api.md",
+      "removed": [
+        "docs_raw/vendor-stockkeeper-api/0.0.3-paused-seller/guide/api.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.6-ep-restock-man/guide/api.md"
+      ]
+    },
+    {
+      "content_hash": "a58f45c59ba1c7aaffdd17099341663e3b08918f2faa95975f5cd6bdd77c0147",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/api-reference/brands.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/api-reference/brands.md"
+      ]
+    },
+    {
+      "content_hash": "aa6ab9028646a122a3543c04dc62b73f8db02d774c2a206b2fc6864171e27f2c",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/architecture/README.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/architecture/README.md"
+      ]
+    },
+    {
+      "content_hash": "ab7d05bec31850b1c0da35bfca76bc5cff8062d2bc71a010658b10a1cd48c7f3",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/brand-management/README.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/brand-management/README.md"
+      ]
+    },
+    {
+      "content_hash": "b8937b9c9e1b7ad7e1ae5394f42aea6e41f99dc487d63ece8f1eb1d2c9873ffe",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/troubleshooting/README.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/troubleshooting/README.md"
+      ]
+    },
+    {
+      "content_hash": "c61c85bc72d53befe005bfa4c835558cf8edf18ddc8320ec2626b56381ab4c07",
+      "cross_project": [],
+      "kept": "docs_raw/catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "removed": [
+        "docs_raw/catalog-portfolio-api/0.0.1-test-bench-v2a/guide/api-reference/README.md"
+      ]
+    },
+    {
+      "content_hash": "ccfb86abc72f0444b58541f44eadb87d1068d4817012a7b00deff02a4a39b25b",
+      "cross_project": [],
+      "kept": "docs_raw/vendor-stockkeeper-api/latest/guide/introduction.md",
+      "removed": [
+        "docs_raw/vendor-stockkeeper-api/0.0.10-stock-consumer/guide/introduction.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.3-paused-seller/guide/introduction.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.6-ep-restock-man/guide/introduction.md"
+      ]
+    },
+    {
+      "content_hash": "ded3cdb21a0fe2e7f0eeba2c2f6f79776cfb6b22fa4d8152b5b613b3b0bc08f8",
+      "cross_project": [],
+      "kept": "docs_raw/vendor-stockkeeper-api/latest/guide/important.md",
+      "removed": [
+        "docs_raw/vendor-stockkeeper-api/0.0.3-paused-seller/guide/important.md",
+        "docs_raw/vendor-stockkeeper-api/0.0.6-ep-restock-man/guide/important.md"
+      ]
+    }
+  ],
+  "method": "sha256 for exact; MinHash with LSH banding for near duplicates; technical-token diff before any removal",
+  "near_duplicate_chunks": [],
+  "near_duplicate_pairs": [
+    {
+      "action": "flagged_version_difference",
+      "estimated_jaccard": 0.8203,
+      "first": "docs_raw/vendor-stockkeeper-api/latest/guide/alerts.md",
+      "second": "docs_raw/vendor-stockkeeper-api/0.0.6-ep-restock-man/guide/alerts.md",
+      "technical_difference": {
+        "only_in_first": [
+          "important",
+          "item_id",
+          "low",
+          "priority",
+          "ps"
+        ],
+        "only_in_second": []
+      }
+    },
+    {
+      "action": "flagged_version_difference",
+      "estimated_jaccard": 0.8672,
+      "first": "docs_raw/vendor-stockkeeper-api/latest/guide/important.md",
+      "second": "docs_raw/vendor-stockkeeper-api/0.0.10-stock-consumer/guide/important.md",
+      "technical_difference": {
+        "only_in_first": [],
+        "only_in_second": [
+          "/items/mla1737779958",
+          "include_attributes",
+          "test_items"
+        ]
+      }
+    }
+  ],
+  "near_duplicate_threshold": 0.8,
+  "repeated_fragments": [
+    {
+      "action": "reported_kept",
+      "occurrences": 2,
+      "preview": "- host: <internal-host> - port: 6612 - user: your_user - password: your_password",
+      "source_files": [
+        "docs_raw/vendor-stockkeeper-api/latest/guide/database.md"
+      ]
+    },
+    {
+      "action": "reported_kept",
+      "occurrences": 2,
+      "preview": "json { \"error\": \"brand_not_found\", \"message\": \"brand with id 123 was not found\",",
+      "source_files": [
+        "docs_raw/catalog-portfolio-api/latest/guide/api-reference/README.md",
+        "docs_raw/catalog-portfolio-api/latest/guide/api-reference/brands.md"
+      ]
+    },
+    {
+      "action": "reported_kept",
+      "occurrences": 2,
+      "preview": "las reglas de ratelimit que limitan el tráfico hacia retailhub según la región, ",
+      "source_files": [
+        "docs_raw/traffic-gate-api/latest/guide/README.md",
+        "docs_raw/traffic-gate-api/latest/guide/sections/arch.md"
+      ]
+    },
+    {
+      "action": "reported_kept",
+      "occurrences": 5,
+      "preview": "| parameter | type | required | description | |-----------|------|----------|---",
+      "source_files": [
+        "docs_raw/catalog-portfolio-api/latest/guide/api-reference/brands.md"
+      ]
+    }
+  ],
+  "threshold_sweep_same_project_pairs": [
+    {
+      "pairs_at_or_above": 4,
+      "threshold": 0.5
+    },
+    {
+      "pairs_at_or_above": 4,
+      "threshold": 0.6
+    },
+    {
+      "pairs_at_or_above": 4,
+      "threshold": 0.7
+    },
+    {
+      "pairs_at_or_above": 2,
+      "threshold": 0.8
+    },
+    {
+      "pairs_at_or_above": 0,
+      "threshold": 0.9
+    },
+    {
+      "pairs_at_or_above": 0,
+      "threshold": 0.95
+    }
+  ]
+}

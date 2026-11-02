@@ -1,0 +1,128 @@
+{
+  "chunks": {
+    "by_usage": {
+      "cpt": 203,
+      "document_holdout": 24,
+      "version_variant": 28
+    },
+    "total": 255
+  },
+  "cpt": {
+    "avg_chars": 487.1,
+    "by_derivation": {
+      "er_diagram": 5,
+      "markdown": 165,
+      "openapi_spec": 24,
+      "sequence_diagram": 9
+    },
+    "by_project": {
+      "2p-revenue-optimizer-api": 4,
+      "catalog-portfolio-api": 62,
+      "demand-forecast-docs": 29,
+      "order-workflow-api": 11,
+      "payment-promise-gateway": 20,
+      "price-engine-api": 2,
+      "traffic-gate-api": 28,
+      "unified-transaction-configs": 5,
+      "vendor-stockkeeper-api": 19,
+      "zenith-keeper": 23
+    },
+    "rows": 203
+  },
+  "eval": {
+    "by_behavior": {
+      "abstain": 23,
+      "answer": 51,
+      "answer_multi_source": 15
+    },
+    "by_category": {
+      "abstention": 23,
+      "api_functionality": 5,
+      "architecture": 13,
+      "comparison": 4,
+      "configuration": 11,
+      "definition": 3,
+      "dependencies": 6,
+      "error_handling": 8,
+      "limitations": 2,
+      "parameters": 8,
+      "processing_flow": 3,
+      "services": 3
+    },
+    "by_difficulty": {
+      "easy": 41,
+      "hard": 33,
+      "medium": 15
+    },
+    "by_language": {
+      "en": 68,
+      "es": 21
+    },
+    "by_project": {
+      "2p-revenue-optimizer-api": 10,
+      "catalog-portfolio-api": 23,
+      "demand-forecast-docs": 5,
+      "order-workflow-api": 11,
+      "payment-promise-gateway": 6,
+      "price-engine-api": 5,
+      "traffic-gate-api": 12,
+      "unified-transaction-configs": 4,
+      "vendor-stockkeeper-api": 9,
+      "zenith-keeper": 4
+    },
+    "by_tier": {
+      "document_holdout": 27,
+      "fact_holdout": 39,
+      "unanswerable": 23
+    },
+    "rows": 89
+  },
+  "sft": {
+    "avg_answer_chars": 138.4,
+    "avg_question_chars": 87.9,
+    "by_category": {
+      "abstention": 54,
+      "api_functionality": 96,
+      "architecture": 8,
+      "comparison": 4,
+      "configuration": 10,
+      "definition": 22,
+      "dependencies": 12,
+      "error_handling": 80,
+      "limitations": 12,
+      "parameters": 74,
+      "processing_flow": 20,
+      "services": 8
+    },
+    "by_difficulty": {
+      "easy": 264,
+      "hard": 66,
+      "medium": 70
+    },
+    "by_generation_method": {
+      "curated_ai_assisted": 102,
+      "rule_based": 298
+    },
+    "by_language": {
+      "en": 308,
+      "es": 92
+    },
+    "by_project": {
+      "2p-revenue-optimizer-api": 42,
+      "catalog-portfolio-api": 82,
+      "demand-forecast-docs": 18,
+      "order-workflow-api": 26,
+      "payment-promise-gateway": 26,
+      "price-engine-api": 24,
+      "traffic-gate-api": 52,
+      "unified-transaction-configs": 16,
+      "vendor-stockkeeper-api": 36,
+      "zenith-keeper": 78
+    },
+    "rows": 400
+  },
+  "sft_recall_probe": {
+    "note": "diagnostic only, not part of the leakage-free evaluation",
+    "rows": 33
+  }
+}

@@ -1,0 +1,481 @@
+{
+  "chunks_removed": {
+    "boilerplate_section": 2,
+    "excluded_by_config": 2,
+    "insufficient_context": 4,
+    "near_duplicate_chunk": 0
+  },
+  "cpt_rejected": {},
+  "curated_rejections": [],
+  "documents_original": 107,
+  "documents_processed": 44,
+  "documents_rejected": 63,
+  "documents_rejected_by_reason": {
+    "exact_duplicate": 21,
+    "excluded_by_config": 2,
+    "manifest": 16,
+    "navigation": 18,
+    "stub_no_technical_content": 6
+  },
+  "documents_version_variants": 6,
+  "documents_with_todo_markers": 4,
+  "evaluation_dropped": {
+    "document_holdout_answer_also_in_sft": 1,
+    "fact_holdout_answer_also_in_sft": 21,
+    "question_also_in_sft_or_duplicate": 1
+  },
+  "fact_conflicts": [
+    {
+      "action": "kept_version_scoped",
+      "key": [
+        "2p-revenue-optimizer-api",
+        "table rule_header",
+        "columns"
+      ],
+      "type": "across_versions",
+      "values": [
+        "id, type, created_date, username, name, description, productive, productive_date",
+        "id, type, date, username, name, description, productive, version"
+      ]
+    },
+    {
+      "action": "kept_version_scoped",
+      "key": [
+        "2p-revenue-optimizer-api",
+        "table rule_row",
+        "columns"
+      ],
+      "type": "across_versions",
+      "values": [
+        "id, rule_id, site_id, seller_id, domain, brand, item",
+        "id, rule_id, site_id, seller_id, domain, brand, item, custom_fields"
+      ]
+    },
+    {
+      "action": "kept_version_scoped",
+      "key": [
+        "vendor-stockkeeper-api",
+        "endpoints",
+        "paths"
+      ],
+      "type": "across_versions",
+      "values": [
+        "/fp/inventory/operations/feed, /fp/inventory/operations/restock-new, /fp/inventory/item/detail/{identifierRegister}, /internal/stock-operations/3pl/{identifierRegister}, /stock-operations/3pl/{identifierRegister}",
+        "/fp/inventory/operations/feed, /fp/inventory/operations/restock-new, /fp/inventory/item/detail/{identifierRegister}, /internal/stock-operations/3pl/{identifierRegister}, /stock-operations/3pl/{identifierRegister}, /stock-operations/3pl/validation/restock-consumer"
+      ]
+    }
+  ],
+  "fact_rejections": {
+    "excluded_by_config": 4,
+    "repeated_parameter": 9
+  },
+  "quarantined_lines": [
+    {
+      "line": 7,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "contradicted by unauthenticated curl examples; target page does not exist"
+    },
+    {
+      "line": 24,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "search path conflicts with GET / in brands.md"
+    },
+    {
+      "line": 57,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 59,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 61,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 62,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 63,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 64,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 65,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 66,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 67,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 68,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 69,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 70,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 71,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 72,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 73,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/README.md",
+      "reason": "`data` response envelope conflicts with `results` in brands.md"
+    },
+    {
+      "line": 308,
+      "path": "catalog-portfolio-api/latest/guide/api-reference/brands.md",
+      "reason": "error code conflicts with validation_failed in two other pages"
+    },
+    {
+      "line": 7,
+      "path": "catalog-portfolio-api/latest/guide/architecture/README.md",
+      "reason": "says Spark while the technology table says Javalin"
+    },
+    {
+      "line": 147,
+      "path": "catalog-portfolio-api/latest/guide/troubleshooting/README.md",
+      "reason": "illustrates authentication that other pages contradict"
+    },
+    {
+      "line": 101,
+      "path": "demand-forecast-docs/latest/guide/overview.md",
+      "reason": "marketplace.pipes conflicts with app.pipes in the same page"
+    },
+    {
+      "line": 104,
+      "path": "demand-forecast-docs/latest/guide/overview.md",
+      "reason": "marketplace.pipes conflicts with app.pipes in the same page"
+    },
+    {
+      "line": 105,
+      "path": "demand-forecast-docs/latest/guide/overview.md",
+      "reason": "marketplace.pipes conflicts with app.pipes in the same page"
+    },
+    {
+      "line": 106,
+      "path": "demand-forecast-docs/latest/guide/overview.md",
+      "reason": "marketplace.pipes conflicts with app.pipes in the same page"
+    },
+    {
+      "line": 108,
+      "path": "demand-forecast-docs/latest/guide/overview.md",
+      "reason": "marketplace.pipes conflicts with app.pipes in the same page"
+    },
+    {
+      "line": 14,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 16,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 18,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 19,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 20,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 21,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 22,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 26,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 28,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 29,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 30,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 31,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 32,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 33,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 34,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 35,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 38,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 40,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 41,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 42,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 43,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 44,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 45,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 46,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 47,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 50,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 52,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 53,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 54,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 55,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 56,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 57,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 58,
+      "path": "traffic-gate-api/latest/guide/README.md",
+      "reason": "whitelist criteria work as rate-limit evasion guidance"
+    },
+    {
+      "line": 7,
+      "path": "traffic-gate-api/latest/guide/sections/database.md",
+      "reason": "names `trunks` where every other page says Vegeta"
+    },
+    {
+      "line": 11,
+      "path": "traffic-gate-api/latest/guide/sections/database.md",
+      "reason": "third spelling of the pci_global scope"
+    },
+    {
+      "line": 56,
+      "path": "traffic-gate-api/latest/guide/sections/processes.md",
+      "reason": "lists the traits that get an IP whitelisted (rate-limit evasion guidance)"
+    },
+    {
+      "line": 74,
+      "path": "traffic-gate-api/latest/guide/sections/processes.md",
+      "reason": "lists the traits that get an IP whitelisted (rate-limit evasion guidance)"
+    },
+    {
+      "line": 131,
+      "path": "vendor-stockkeeper-api/latest/guide/important.md",
+      "reason": "unterminated curl command"
+    },
+    {
+      "line": 231,
+      "path": "vendor-stockkeeper-api/latest/guide/important.md",
+      "reason": "says test_items while the payload and line 37 use test_item"
+    },
+    {
+      "line": 232,
+      "path": "vendor-stockkeeper-api/latest/guide/important.md",
+      "reason": "says test_items while the payload and line 37 use test_item"
+    }
+  ],
+  "redactions": {
+    "aws_console_link": 4,
+    "diagram_blocks": 49,
+    "email": 6,
+    "empty_fences": 1,
+    "internal_host": 78,
+    "long_fences": 21,
+    "real_brand": 4,
+    "slack_channel": 2,
+    "slack_field": 2,
+    "username": 1
+  },
+  "sft": {
+    "candidates": 402,
+    "category_coverage": {
+      "abstention": 54,
+      "api_functionality": 96,
+      "architecture": 8,
+      "comparison": 4,
+      "configuration": 10,
+      "definition": 22,
+      "dependencies": 12,
+      "error_handling": 80,
+      "limitations": 12,
+      "parameters": 74,
+      "processing_flow": 20,
+      "services": 8
+    },
+    "difficulty_coverage": {
+      "easy": 264,
+      "hard": 66,
+      "medium": 70
+    },
+    "fact_splits": {
+      "document_holdout": 28,
+      "fact_holdout": 61,
+      "sft": 174
+    },
+    "pending_reasons": {
+      "no_chunk_for_fact": 2
+    },
+    "pending_review": 2,
+    "validated": 400,
+    "validated_percent": 99.5
+  },
+  "sft_contradictions_removed": 0,
+  "sft_duplicates_removed": 0,
+  "validation": {
+    "docs_raw_tree_sha256": "6b6dc63dd09e41dc0c2d98e900bb18ae8bde1b6e0d049a5107138e4b9f84634c",
+    "errors": {},
+    "evaluation_by_behavior": {
+      "abstain": 23,
+      "answer": 51,
+      "answer_multi_source": 15
+    },
+    "evaluation_by_tier": {
+      "document_holdout": 27,
+      "fact_holdout": 39,
+      "unanswerable": 23
+    },
+    "examples": {},
+    "leakage": {
+      "answer_overlap_with_sft": 0,
+      "answer_partial_key_overlap_with_sft": 10,
+      "document_holdout_answers_in_cpt": 0,
+      "fact_holdout_answers_in_cpt_by_design": 39,
+      "question_exact_or_semantic_overlap_with_sft": 0,
+      "question_high_jaccard_with_other_identifiers": 33,
+      "sft_facts_in_eval": 0
+    },
+    "passed": true,
+    "provenance_valid_percent": {
+      "cpt": 100.0,
+      "eval": 100.0,
+      "sft": 100.0
+    },
+    "rows_checked": {
+      "cpt": 203,
+      "eval": 89,
+      "sft": 400
+    }
+  }
+}

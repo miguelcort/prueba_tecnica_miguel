@@ -1,0 +1,56 @@
+{
+  "counts": {
+    "answer_overlap_with_sft": 0,
+    "answer_partial_key_overlap_with_sft": 10,
+    "document_holdout_answers_in_cpt": 0,
+    "fact_holdout_answers_in_cpt_by_design": 39,
+    "question_exact_or_semantic_overlap_with_sft": 0,
+    "question_high_jaccard_with_other_identifiers": 33,
+    "sft_facts_in_eval": 0
+  },
+  "held_out_documents": [
+    "docs_raw/2p-revenue-optimizer-api/latest/guide/README.md",
+    "docs_raw/catalog-portfolio-api/latest/guide/architecture/README.md",
+    "docs_raw/order-workflow-api/5.6.2-hotfix-1/guide/README.md",
+    "docs_raw/traffic-gate-api/latest/guide/sections/waf_config.md",
+    "docs_raw/vendor-stockkeeper-api/latest/guide/introduction.md"
+  ],
+  "passed": true,
+  "project_split_viability": {
+    "decision": "document split with fact holdout",
+    "fact_share_percent_per_project": {
+      "2p-revenue-optimizer-api": 11.4,
+      "catalog-portfolio-api": 24.3,
+      "demand-forecast-docs": 3.8,
+      "order-workflow-api": 6.5,
+      "payment-promise-gateway": 5.3,
+      "price-engine-api": 3.8,
+      "traffic-gate-api": 14.4,
+      "unified-transaction-configs": 3.0,
+      "vendor-stockkeeper-api": 8.7,
+      "zenith-keeper": 18.6
+    },
+    "facts_per_project": {
+      "2p-revenue-optimizer-api": 30,
+      "catalog-portfolio-api": 64,
+      "demand-forecast-docs": 10,
+      "order-workflow-api": 17,
+      "payment-promise-gateway": 14,
+      "price-engine-api": 10,
+      "traffic-gate-api": 38,
+      "unified-transaction-configs": 8,
+      "vendor-stockkeeper-api": 23,
+      "zenith-keeper": 49
+    },
+    "projects": 10,
+    "projects_without_enough_documents_for_document_holdout": {
+      "demand-forecast-docs": "2 documents with at least 3 facts",
+      "payment-promise-gateway": "1 documents with at least 3 facts",
+      "price-engine-api": "1 documents with at least 3 facts",
+      "unified-transaction-configs": "1 documents with at least 3 facts",
+      "zenith-keeper": "2 documents with at least 3 facts"
+    },
+    "reason": "the facts are specific to each service, so a held-out project leaves closed-book arms with nothing to learn about it and only measures retrieval"
+  },
+  "reading_guide": "fact_holdout answers are in CPT by design: that tier measures transfer from CPT. Partial key overlap means one key fact, not the whole answer, also appears in an SFT answer. High Jaccard with other identifiers means the same template about another subject."
+}

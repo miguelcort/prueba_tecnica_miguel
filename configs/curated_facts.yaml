@@ -1,0 +1,1233 @@
+# AI-assisted, human-reviewable facts. Nothing is trusted by default: an entry is rejected unless
+# every evidence quote exists in the cleaned source and every key fact lies within those lines.
+facts:
+- id: vendor-purpose
+  source_path: vendor-stockkeeper-api/latest/guide/introduction.md
+  kind: conceptual
+  evidence: responsible for updating the stock of items belonging to the Standard area
+  key_facts:
+  - updating the stock
+  - Standard area
+  answer: vendor-stockkeeper-api is responsible for updating the stock of items belonging to the Standard area.
+  train_questions:
+  - What is vendor-stockkeeper-api responsible for?
+  - Explain the purpose of the vendor-stockkeeper-api service.
+  eval_question: Which job does vendor-stockkeeper-api do, and for which area's items?
+  category: definition
+- id: vendor-restock-endpoints
+  source_path: vendor-stockkeeper-api/latest/guide/introduction.md
+  kind: conceptual
+  evidence: one for 3PL stock movements (smaller quantities) and another for inbound movements
+  key_facts:
+  - 3PL
+  - inbound
+  answer: 'vendor-stockkeeper-api has two main restocking endpoints: one for 3PL stock movements, with smaller quantities, and another for inbound movements, which can contain larger quantities.'
+  train_questions:
+  - What are the two main ways to restock in vendor-stockkeeper-api?
+  - How does vendor-stockkeeper-api separate restocking by movement size?
+  eval_question: In vendor-stockkeeper-api, which kinds of stock movement have their own restocking endpoint?
+  category: comparison
+- id: vendor-restock-verification
+  source_path: vendor-stockkeeper-api/latest/guide/important.md
+  kind: procedural
+  evidence: go to inbound conciliation to check if the items have the tags
+  key_facts:
+  - inbound conciliation
+  - tags
+  answer: Before sending an inbound in the Restock flow of vendor-stockkeeper-api, get that inbound and go to inbound conciliation to check whether the items have the tags that identify them as test items.
+  train_questions:
+  - How do I verify test items in the Restock flow of vendor-stockkeeper-api?
+  - What must I check before sending an inbound through vendor-stockkeeper-api?
+  eval_question: In vendor-stockkeeper-api, where do I look before sending an inbound to confirm its items are test items?
+  category: services
+- id: vendor-feed-table
+  source_path: vendor-stockkeeper-api/latest/guide/important.md
+  kind: procedural
+  evidence:
+  - This Flow has an **Operation id**
+  - 1p-3pl-integrator called 1p_3pl_product_stock_mov
+  key_facts:
+  - Operation id
+  - 1p_3pl_product_stock_mov
+  answer: In the Feed flow documented by vendor-stockkeeper-api, you use the Operation id to query the 1p_3pl_product_stock_mov table in the 1p-3pl-integrator database.
+  train_questions:
+  - Which table is queried with the Operation id in the Feed flow of vendor-stockkeeper-api?
+  - How does vendor-stockkeeper-api's guide say to start verifying the Feed flow?
+  eval_question: For vendor-stockkeeper-api's Feed flow, where does the Operation id lead me to look for movement data?
+  category: dependencies
+- id: vendor-feed-keys
+  source_path: vendor-stockkeeper-api/latest/guide/important.md
+  kind: procedural
+  evidence: 'Which are: **[sap_sku, material_id, site_id, seller_id]**'
+  key_facts:
+  - sap_sku
+  - material_id
+  - site_id
+  - seller_id
+  answer: In the Feed flow verification of vendor-stockkeeper-api, the key data obtained from the table are sap_sku, material_id, site_id and seller_id.
+  train_questions:
+  - Which key fields does the vendor-stockkeeper-api Feed flow verification obtain from the movement table?
+  - What data do I need from the stock movement table in vendor-stockkeeper-api's Feed verification?
+  eval_question: Name the fields used in vendor-stockkeeper-api's Feed verification to look up whether items are test items.
+  category: processing_flow
+- id: vendor-negative-alert
+  source_path: vendor-stockkeeper-api/latest/guide/alerts.md
+  kind: procedural
+  evidence: Notify to **Envio Pack** that the restock could not be completed correctly
+  key_facts:
+  - Envio Pack
+  answer: For the negative quantity restock alert of vendor-stockkeeper-api, after identifying the item in the logs, notify Envio Pack that the restock could not be completed correctly, then find out why
+    it happened and resolve the issue.
+  train_questions:
+  - Who must be notified when vendor-stockkeeper-api raises the negative quantity restock alert?
+  - What are the steps for the negative quantity restock alert in vendor-stockkeeper-api?
+  eval_question: A restock in vendor-stockkeeper-api would leave available quantity below zero and the alert fired. Which team should I tell?
+  category: error_handling
+- id: vendor-low-priority-scope
+  source_path: vendor-stockkeeper-api/latest/guide/alerts.md
+  kind: procedural
+  evidence: logs with the **stream-prod** scope
+  key_facts:
+  - stream-prod
+  answer: For the stock validation alert of vendor-stockkeeper-api, review its logs with the stream-prod scope to identify the item and SKU associated with the potential out-of-stock sale.
+  train_questions:
+  - Which log scope should I use for the low-priority stock validation alert in vendor-stockkeeper-api?
+  - How do I find the affected item and SKU for a stock validation alert in vendor-stockkeeper-api?
+  eval_question: To investigate a potential out-of-stock sale alert in vendor-stockkeeper-api, which scope do I filter the logs by?
+  category: error_handling
+- id: vendor-shield-ticket
+  source_path: vendor-stockkeeper-api/latest/guide/alerts.md
+  kind: procedural
+  evidence: a ticket should be raised in Shield to request the publication be blocked
+  key_facts:
+  - Shield
+  - blocked
+  answer: For the stock update error alert of vendor-stockkeeper-api, if the item has available units and its status allows sales without stock, raise a ticket in Shield to request that the publication
+    be blocked.
+  train_questions:
+  - When should a Shield ticket be raised for the 'Validation stock ERROR updating item' alert in vendor-stockkeeper-api?
+  - What does vendor-stockkeeper-api's runbook do to prevent out-of-stock sales when a stock update fails?
+  eval_question: In vendor-stockkeeper-api, a stock update failed and the item can still sell without stock. What is the documented next step?
+  category: error_handling
+- id: traffic-purpose
+  source_path: traffic-gate-api/latest/guide/README.md
+  kind: conceptual
+  evidence: se encarga de agregar a una lista blanca o whitelist, aquellas direcciones IP que no deben ser alcanzadas por reglas de ratelimit
+  key_facts:
+  - whitelist
+  - ratelimit
+  answer: traffic-gate-api se encarga de agregar a una whitelist las direcciones IP que no deben ser alcanzadas por las reglas de ratelimit aplicadas en el WAF.
+  train_questions:
+  - ¿Para qué sirve traffic-gate-api?
+  - ¿Cuál es la responsabilidad principal de traffic-gate-api?
+  eval_question: Explica qué problema resuelve traffic-gate-api respecto a las reglas del WAF.
+  category: definition
+- id: traffic-scopes
+  source_path: traffic-gate-api/latest/guide/README.md
+  kind: conceptual
+  evidence: 'Se tienen 4 posibles valores para el scope: front, api, pci, pci_global'
+  key_facts:
+  - front
+  - api
+  - pci
+  - pci_global
+  answer: 'En traffic-gate-api el scope tiene 4 valores posibles: front, api, pci y pci_global. Los dos últimos están relacionados con RetailHub Pay.'
+  train_questions:
+  - ¿Qué valores puede tomar el scope en traffic-gate-api?
+  - ¿Cuántos scopes maneja traffic-gate-api y cuáles son?
+  eval_question: Enumera los scopes de ratelimit que reconoce traffic-gate-api.
+  category: definition
+- id: traffic-job-count
+  source_path: traffic-gate-api/latest/guide/sections/arch.md
+  kind: numeric
+  evidence: tiene configurados en RetailHub 8 jobs, dos por cada uno de los 4 scopes
+  key_facts:
+  - 8 jobs
+  answer: 'traffic-gate-api tiene configurados 8 jobs: dos por cada uno de los 4 scopes, uno para enviar a whitelist y otro para purgar.'
+  train_questions:
+  - ¿Cuántos jobs tiene configurados traffic-gate-api?
+  - ¿Cómo se reparten los jobs de traffic-gate-api entre los scopes?
+  eval_question: ¿Qué cantidad total de jobs necesita traffic-gate-api y por qué esa cantidad?
+  category: configuration
+- id: traffic-job-frequency
+  source_path: traffic-gate-api/latest/guide/sections/arch.md
+  kind: numeric
+  evidence: Todos los 4 jobs que llaman el proceso de whitelist, se ejecutan cada minuto
+  key_facts:
+  - cada minuto
+  - cada hora
+  answer: En traffic-gate-api, los jobs del proceso de whitelist se ejecutan cada minuto y los del proceso de purga se ejecutan cada hora.
+  train_questions:
+  - ¿Con qué frecuencia corren los jobs de whitelist y de purga en traffic-gate-api?
+  - ¿Cada cuánto evalúa traffic-gate-api las IPs que debe agregar o remover de la whitelist?
+  eval_question: En traffic-gate-api, ¿cuál es la periodicidad del job de whitelist comparada con la del job de purga?
+  category: comparison
+- id: traffic-job-no-body
+  source_path: traffic-gate-api/latest/guide/sections/arch.md
+  kind: conceptual
+  evidence: solicitudes HTTP tipo POST únicamente y no está soportado el envío de un body
+  key_facts:
+  - POST
+  - query params
+  answer: Los jobs que invocan a traffic-gate-api hacen solicitudes HTTP POST únicamente y no soportan enviar un body, por lo que los parámetros deben ir como query params.
+  train_questions:
+  - ¿Cómo reciben parámetros los servicios de traffic-gate-api llamados por jobs?
+  - ¿Puede un job de RetailHub enviar un body al llamar a traffic-gate-api?
+  eval_question: Si un job de traffic-gate-api tiene que indicar el scope, ¿puede enviarlo en el body? ¿Cómo debe hacerlo?
+  category: limitations
+  question_type: reasoning
+- id: traffic-limit-retailhub-countries
+  source_path: traffic-gate-api/latest/guide/sections/waf_config.md
+  kind: numeric
+  evidence: a 1000 solicitudes cada 5 minutos
+  key_facts:
+  - 1000 solicitudes cada 5 minutos
+  answer: Según la documentación de traffic-gate-api, la regla para países RetailHub limita el tráfico a 1000 solicitudes cada 5 minutos.
+  train_questions:
+  - ¿Cuál es el ratelimit para países RetailHub según traffic-gate-api?
+  - ¿Cuántas solicitudes permite la regla de países RetailHub documentada en traffic-gate-api?
+  eval_question: En la configuración del WAF descrita por traffic-gate-api, ¿qué límite aplica al tráfico de países donde RetailHub tiene Market Place?
+  category: configuration
+- id: traffic-limit-no-retailhub
+  source_path: traffic-gate-api/latest/guide/sections/waf_config.md
+  kind: numeric
+  evidence: a 200 solicitudes cada 5 minutos
+  key_facts:
+  - 200 solicitudes cada 5 minutos
+  answer: Según la documentación de traffic-gate-api, la regla para países No RetailHub limita el tráfico a 200 solicitudes cada 5 minutos.
+  train_questions:
+  - ¿Cuál es el ratelimit para países No RetailHub según traffic-gate-api?
+  - ¿Qué límite documenta traffic-gate-api para países donde RetailHub no opera?
+  eval_question: En la configuración del WAF descrita por traffic-gate-api, ¿cuántas solicitudes se permiten a un país No RetailHub?
+  category: configuration
+- id: traffic-vegeta
+  source_path: traffic-gate-api/latest/guide/sections/waf_config.md
+  kind: conceptual
+  evidence: agregando o removiendo IPs dinámicamente, por medio de Vegeta-API
+  key_facts:
+  - IPSets
+  - Vegeta-API
+  answer: traffic-gate-api opera sobre los IPSets de las reglas de ratelimit, agregando o removiendo IPs dinámicamente por medio de Vegeta-API, que interactúa con el WAF mediante la API WAFv2 de AWS.
+  train_questions:
+  - ¿Cómo modifica traffic-gate-api los IPSets del WAF?
+  - ¿Qué API usa traffic-gate-api para agregar o remover IPs del WAF?
+  eval_question: ¿A través de qué componente actúa traffic-gate-api sobre las listas de IP del WAF?
+  category: dependencies
+- id: traffic-topic
+  source_path: traffic-gate-api/latest/guide/sections/processes.md
+  kind: conceptual
+  evidence: El mensaje se envía al tópico process-blocks.traffic-gate-api
+  key_facts:
+  - process-blocks.traffic-gate-api
+  answer: traffic-gate-api envía cada dirección IP bloqueada al tópico process-blocks.traffic-gate-api para su posterior análisis.
+  train_questions:
+  - ¿A qué tópico encola traffic-gate-api las IPs bloqueadas?
+  - ¿Cómo se llama el tópico de IPs bloqueadas en traffic-gate-api?
+  eval_question: Durante el encolamiento en traffic-gate-api, ¿en qué tópico terminan los mensajes de cada IP bloqueada?
+  category: dependencies
+- id: traffic-tables
+  derived_tokens: [ip]
+  source_path: traffic-gate-api/latest/guide/sections/database.md
+  kind: numeric
+  evidence: La base de datos de Traffic Gate consta de 5 tablas
+  key_facts:
+  - 5 tablas
+  answer: 'La base de datos de traffic-gate-api consta de 5 tablas: Execution, Blacklist, Whitelist, Rules e IP.'
+  train_questions:
+  - ¿Cuántas tablas tiene la base de datos de traffic-gate-api?
+  - ¿Cómo está compuesta la base de datos de traffic-gate-api?
+  eval_question: ¿De cuántas tablas consta el modelo de datos de traffic-gate-api?
+  category: architecture
+- id: traffic-logical-delete
+  source_path: traffic-gate-api/latest/guide/sections/database.md
+  kind: conceptual
+  evidence: se hace un borrado lógico en base de datos, actualizando el campo 'deleted' en true
+  key_facts:
+  - borrado lógico
+  - deleted
+  answer: Cuando una IP ya no debe pertenecer a una whitelist, traffic-gate-api hace un borrado lógico actualizando el campo 'deleted' en true.
+  train_questions:
+  - ¿Cómo elimina traffic-gate-api una IP de la tabla Whitelist?
+  - ¿traffic-gate-api borra físicamente las IPs de la tabla Whitelist?
+  eval_question: ¿Qué ocurre en la base de datos de traffic-gate-api cuando una IP deja de pertenecer a la whitelist?
+  category: processing_flow
+- id: traffic-purge-concurrency
+  source_path: traffic-gate-api/latest/guide/sections/processes.md
+  kind: conceptual
+  evidence: este proceso trabaja con concurrencia
+  key_facts:
+  - concurrencia
+  - workers
+  - semáforo
+  answer: 'A diferencia del flujo de procesamiento, el proceso de purga de traffic-gate-api trabaja con concurrencia: crea una serie de workers y un semáforo que bloquea el resto del flujo hasta procesar
+    todas las direcciones IP.'
+  train_questions:
+  - ¿Cómo maneja traffic-gate-api la gran cantidad de IPs en el proceso de purga?
+  - ¿Qué mecanismo de concurrencia usa la purga de traffic-gate-api?
+  eval_question: ¿Qué diferencia de ejecución tiene la purga de traffic-gate-api frente al flujo de procesamiento?
+  category: comparison
+- id: catalog-states
+  source_path: catalog-portfolio-api/latest/guide/brand-management/README.md
+  kind: conceptual
+  evidence:
+  - '**STAND_BY**: Brand is created but not yet active'
+  - '**ACTIVE**: Brand is fully functional'
+  - '**DELETED**: Brand has been permanently removed'
+  key_facts:
+  - STAND_BY
+  - ACTIVE
+  - DELETED
+  answer: In catalog-portfolio-api a brand can be STAND_BY (created but not yet active), ACTIVE (fully functional and visible) or DELETED (permanently removed, which is irreversible).
+  train_questions:
+  - What states can a brand have in catalog-portfolio-api?
+  - Describe the brand lifecycle states of catalog-portfolio-api.
+  eval_question: Which statuses exist for a brand in catalog-portfolio-api, and what does each mean?
+  category: definition
+- id: catalog-activation
+  source_path: catalog-portfolio-api/latest/guide/brand-management/README.md
+  kind: conceptual
+  evidence: '**Main Logo**: At least one main logo must be uploaded'
+  key_facts:
+  - main logo
+  answer: To activate a brand in catalog-portfolio-api, at least one main logo must be uploaded, all business rules must pass validation, and it must comply with regulations service requirements.
+  train_questions:
+  - What are the requirements to activate a brand in catalog-portfolio-api?
+  - Why might a brand fail to activate in catalog-portfolio-api?
+  eval_question: A brand in catalog-portfolio-api has no main logo uploaded yet. Can it be activated, and what else is required?
+  category: services
+  question_type: reasoning
+- id: catalog-name-unique
+  source_path: catalog-portfolio-api/latest/guide/brand-management/README.md
+  kind: conceptual
+  evidence: '**Name**: Must be unique within the site'
+  key_facts:
+  - unique within the site
+  answer: In catalog-portfolio-api, a brand name must be unique within the site.
+  train_questions:
+  - What uniqueness rule applies to brand names in catalog-portfolio-api?
+  - Can two brands share a name in catalog-portfolio-api?
+  eval_question: At what level does catalog-portfolio-api enforce uniqueness of the brand name?
+  category: limitations
+- id: catalog-delete-permission
+  source_path: catalog-portfolio-api/latest/guide/brand-management/README.md
+  kind: conceptual
+  evidence: '**Authorization**: Requires client ID to be whitelisted'
+  key_facts:
+  - client ID
+  - whitelisted
+  answer: Deleting a brand in catalog-portfolio-api requires the client ID to be whitelisted, and the deletion cannot be undone.
+  train_questions:
+  - What permission is needed to delete a brand in catalog-portfolio-api?
+  - Who can delete a brand in catalog-portfolio-api?
+  eval_question: What authorization condition must a caller meet to remove a brand from catalog-portfolio-api?
+  category: limitations
+- id: catalog-rate-limit
+  source_path: catalog-portfolio-api/latest/guide/api-reference/README.md
+  kind: numeric
+  evidence: '**Rate Limit**: 1000 requests per minute per client'
+  key_facts:
+  - 1000 requests per minute
+  answer: catalog-portfolio-api has a rate limit of 1000 requests per minute per client.
+  train_questions:
+  - What is the rate limit of catalog-portfolio-api?
+  - How many requests can a client send to catalog-portfolio-api each minute?
+  eval_question: A client of catalog-portfolio-api plans to send 1500 requests in one minute. Is that within the documented rate limit?
+  category: limitations
+  question_type: reasoning
+- id: catalog-sla
+  source_path: catalog-portfolio-api/latest/guide/architecture/README.md
+  kind: numeric
+  evidence:
+  - '**Response Time**: < 100ms for typical operations'
+  - '**Availability**: 99.9% uptime SLA'
+  key_facts:
+  - 100ms
+  - 99.9%
+  answer: catalog-portfolio-api targets a response time below 100ms for typical operations and has a 99.9% uptime SLA.
+  train_questions:
+  - What are the performance characteristics of catalog-portfolio-api?
+  - What availability and latency does catalog-portfolio-api document?
+  eval_question: Which latency figure and uptime SLA are stated for catalog-portfolio-api?
+  category: configuration
+- id: catalog-monitor-thresholds
+  source_path: catalog-portfolio-api/latest/guide/troubleshooting/README.md
+  kind: numeric
+  evidence:
+  - '**Error Rates**: < 1% for 4xx/5xx errors'
+  - '**Database Connections**: Pool utilization < 80%'
+  - '**Memory Usage**: Heap usage < 85%'
+  key_facts:
+  - 1%
+  - 80%
+  - 85%
+  answer: The catalog-portfolio-api guide monitors error rates below 1% for 4xx/5xx errors, connection pool utilization below 80%, and heap usage below 85%.
+  train_questions:
+  - Which metric thresholds should be monitored for catalog-portfolio-api?
+  - What are the healthy limits for pool and heap usage in catalog-portfolio-api?
+  eval_question: What targets does the catalog-portfolio-api guide set for error rate, connection pool and heap?
+  category: configuration
+- id: catalog-integrations
+  source_path: catalog-portfolio-api/latest/guide/architecture/README.md
+  kind: conceptual
+  evidence:
+  - '**Pictures API**: Logo storage and management'
+  - '**Regulations API**: Category and compliance validation'
+  key_facts:
+  - Pictures API
+  - Regulations API
+  answer: catalog-portfolio-api integrates with Pictures API for logo storage and management and with Regulations API for category and compliance validation.
+  train_questions:
+  - Which external APIs does catalog-portfolio-api use for logos and compliance?
+  - What is Regulations API used for in catalog-portfolio-api?
+  eval_question: Which integrations does catalog-portfolio-api rely on to store logos and to validate categories?
+  category: dependencies
+- id: payment-purpose
+  source_path: payment-promise-gateway/latest/guide/README.md
+  kind: conceptual
+  evidence: A middleware service that handles payment-related self-service operations
+  key_facts:
+  - middleware
+  - self-service
+  answer: payment-promise-gateway is a middleware service that handles payment-related self-service operations, acting as an intermediary between frontend applications and the core payment services.
+  train_questions:
+  - What is payment-promise-gateway?
+  - Where does payment-promise-gateway sit in the payment system?
+  eval_question: Describe the role of payment-promise-gateway between frontends and core payment services.
+  category: definition
+- id: payment-stack
+  source_path: payment-promise-gateway/latest/guide/README.md
+  kind: conceptual
+  evidence:
+  - '**Language**: Java 17'
+  - '**Framework**: Spring Boot 3.2.4'
+  - '**Dependency Injection**: Google Guice'
+  key_facts:
+  - Java 17
+  - Spring Boot 3.2.4
+  - Google Guice
+  answer: payment-promise-gateway is written in Java 17 with Spring Boot 3.2.4 and uses Google Guice for dependency injection.
+  train_questions:
+  - What is the technical stack of payment-promise-gateway?
+  - Which framework and Java version does payment-promise-gateway use?
+  eval_question: Name the language version, framework version and DI library of payment-promise-gateway.
+  category: architecture
+- id: payment-command-pattern
+  source_path: payment-promise-gateway/latest/guide/README.md
+  kind: conceptual
+  evidence:
+  - Used for encapsulating request parameters
+  - 'Examples: `PromiseCommand`, `LateFeeForgivenessCommand`'
+  key_facts:
+  - PromiseCommand
+  - LateFeeForgivenessCommand
+  answer: payment-promise-gateway uses the Command pattern to encapsulate request parameters, for example in PromiseCommand and LateFeeForgivenessCommand.
+  train_questions:
+  - What is the Command pattern used for in payment-promise-gateway?
+  - Give examples of command objects in payment-promise-gateway.
+  eval_question: Which classes of payment-promise-gateway illustrate its way of encapsulating request parameters?
+  category: architecture
+- id: payment-confirm-forgiveness
+  source_path: payment-promise-gateway/latest/guide/README.md
+  kind: procedural
+  evidence:
+  - '**PUT /forgiveness_proposal**'
+  - Requires LateFeeForgivenessProposalCommand for confirmation
+  - Finalizes the forgiveness process
+  key_facts:
+  - PUT /forgiveness_proposal
+  - LateFeeForgivenessProposalCommand
+  answer: To confirm a late fee forgiveness proposal in payment-promise-gateway, call PUT /forgiveness_proposal with a LateFeeForgivenessProposalCommand. This finalizes the forgiveness process.
+  train_questions:
+  - How do I confirm a forgiveness proposal in payment-promise-gateway?
+  - Which command object does payment-promise-gateway require to finalize a late fee forgiveness?
+  eval_question: In payment-promise-gateway, what call and body complete a forgiveness process that was already started?
+  category: api_functionality
+- id: payment-local-scope
+  source_path: payment-promise-gateway/latest/guide/README.md
+  kind: procedural
+  evidence: You need to set `SCOPE=dev` or `SCOPE=local` environment variable
+  key_facts:
+  - SCOPE=dev
+  - SCOPE=local
+  answer: To run payment-promise-gateway locally, set the environment variable SCOPE=dev or SCOPE=local.
+  train_questions:
+  - Which environment variable must I set to run payment-promise-gateway locally?
+  - How do I configure the scope to run payment-promise-gateway on my machine?
+  eval_question: What value does SCOPE need for a local run of payment-promise-gateway?
+  category: configuration
+- id: 2p-scope-suffix
+  source_path: 2p-revenue-optimizer-api/latest/guide/README.md
+  kind: conceptual
+  evidence: it is identified from the last '-' of the name of the scope
+  key_facts:
+  - last '-'
+  answer: In 2p-revenue-optimizer-api, the suffix of each SCOPE selects the properties file to use, and it is identified from the last '-' of the scope name.
+  train_questions:
+  - How does 2p-revenue-optimizer-api decide which properties file to load?
+  - How is the SCOPE_SUFFIX obtained in 2p-revenue-optimizer-api?
+  eval_question: From which part of the scope name does 2p-revenue-optimizer-api derive its properties suffix?
+  category: configuration
+- id: 2p-precedence
+  source_path: 2p-revenue-optimizer-api/latest/guide/README.md
+  kind: conceptual
+  evidence: has preference over the property of **application.yml**
+  key_facts:
+  - application.yml
+  - preference
+  answer: In 2p-revenue-optimizer-api, if a property is in both files, the value in application-<SCOPE_SUFFIX>.yml has preference over the one in application.yml.
+  train_questions:
+  - Which value wins when a property is in both properties files of 2p-revenue-optimizer-api?
+  - How do application.yml and the scope-specific file combine in 2p-revenue-optimizer-api?
+  eval_question: A setting is defined in application.yml and in application-test.yml of 2p-revenue-optimizer-api. Which one applies under the test suffix?
+  category: configuration
+- id: 2p-web-server
+  source_path: 2p-revenue-optimizer-api/latest/guide/README.md
+  kind: conceptual
+  evidence: This project is configured with Jetty
+  key_facts:
+  - Jetty
+  answer: 2p-revenue-optimizer-api is configured with Jetty; to change the web server, configure the corresponding dependency in build.gradle.
+  train_questions:
+  - Which embedded web server does 2p-revenue-optimizer-api use?
+  - How can the web server of 2p-revenue-optimizer-api be changed?
+  eval_question: What is the web server configured by default in 2p-revenue-optimizer-api?
+  category: architecture
+- id: 2p-local-scope
+  source_path: 2p-revenue-optimizer-api/latest/guide/README.md
+  kind: procedural
+  evidence: configure the environment variable **SCOPE=local** in the app luncher
+  key_facts:
+  - SCOPE=local
+  answer: To run 2p-revenue-optimizer-api from your IDE, configure the environment variable SCOPE=local in the app launcher.
+  train_questions:
+  - How do I run 2p-revenue-optimizer-api from my IDE?
+  - Which environment variable is needed to launch 2p-revenue-optimizer-api in development?
+  eval_question: What must be set in the launcher to start 2p-revenue-optimizer-api from a development IDE?
+  category: configuration
+- id: order-purpose
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md
+  kind: conceptual
+  evidence:
+  - Validate the branching model
+  - Protect the important branches
+  - Create backports to help keeping the branches in sync
+  - Create automatic versions based on a cron-like configuration
+  key_facts:
+  - branching model
+  - backports
+  - automatic versions
+  answer: order-workflow-api validates the branching model, protects the important branches, creates backports to keep branches in sync, and creates automatic versions based on a cron-like configuration.
+  train_questions:
+  - What tasks does order-workflow-api perform?
+  - How does order-workflow-api standardize the development flow?
+  eval_question: What does order-workflow-api automate for applications integrated into Release Process?
+  category: definition
+- id: order-mysql
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md
+  kind: conceptual
+  evidence:
+  - A MySQL database is used to store the following information
+  - Workflow configuration (protected branches, releasable branches, etc.)
+  - Automatic version creation schedule
+  key_facts:
+  - MySQL
+  - Workflow configuration
+  - Automatic version creation schedule
+  answer: order-workflow-api uses a MySQL database to store the workflow configuration, such as protected and releasable branches, and the automatic version creation schedule.
+  train_questions:
+  - What does order-workflow-api store in its database?
+  - Which database engine does order-workflow-api use, and for what?
+  eval_question: Which information is persisted by order-workflow-api, and in what kind of database?
+  category: dependencies
+- id: order-workflow-types
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/database.md
+  kind: conceptual
+  evidence:
+  - Currently we have two types
+  - '- Gitflow'
+  - '- Libflow'
+  key_facts:
+  - Gitflow
+  - Libflow
+  answer: 'order-workflow-api currently has two workflow types: Gitflow and Libflow.'
+  train_questions:
+  - What workflow types does order-workflow-api support?
+  - How many kinds of workflow exist in order-workflow-api?
+  eval_question: Name the git flows that order-workflow-api represents as workflows.
+  category: definition
+- id: order-test-key
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/development.md
+  kind: procedural
+  evidence:
+  - make sure you provide the private key
+  - gh-proxy. To to this, create a file in `src/main/resources/workflow-gh-proxy.key`
+  key_facts:
+  - src/main/resources/workflow-gh-proxy.key
+  answer: Before running the tests of order-workflow-api, create the file src/main/resources/workflow-gh-proxy.key with the private key used to communicate with gh-proxy, then run mvn test.
+  train_questions:
+  - What do I need before running the tests of order-workflow-api?
+  - Where does order-workflow-api expect the gh-proxy private key?
+  eval_question: Which file must exist for order-workflow-api's tests to talk to gh-proxy?
+  category: services
+- id: order-local-run
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/development.md
+  kind: procedural
+  evidence:
+  - Copy the file`application-local.yml.dist`
+  - and rename it to `application-local.yml`
+  - '`mvn spring-boot:run`'
+  key_facts:
+  - application-local.yml
+  - mvn spring-boot:run
+  answer: To run order-workflow-api locally, copy application-local.yml.dist from the resources directory, rename it to application-local.yml, edit the parameters for your environment, and run mvn spring-boot:run.
+  train_questions:
+  - How do I run order-workflow-api locally?
+  - Which configuration file must I create to start order-workflow-api on my machine?
+  eval_question: Walk me through the configuration and command to launch order-workflow-api in a local environment.
+  category: services
+- id: order-validate-pipeline
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/bigq.md
+  kind: procedural
+  evidence: Upon receiving a "start work" message from the bigq topic
+  key_facts:
+  - start work
+  - Pipeline ID
+  answer: When order-workflow-api receives a "start work" message containing a Pipeline ID from the BigQ topic, it fetches the full Pipeline information from Orchestrator.
+  train_questions:
+  - What does order-workflow-api do when it receives a start work message?
+  - How does pipeline validation start in order-workflow-api?
+  eval_question: Which message carrying a Pipeline ID makes order-workflow-api fetch the full pipeline?
+  category: processing_flow
+- id: demand-purpose
+  source_path: demand-forecast-docs/latest/guide/overview.md
+  kind: conceptual
+  evidence: providing insights into TGMV and TSI for 9 product categories + total for each site
+  key_facts:
+  - TGMV
+  - TSI
+  - 9 product categories
+  answer: The marketplace forecasting project in demand-forecast-docs forecasts demand of marketplace products, providing insights into TGMV and TSI for 9 product categories plus the total for each site.
+  train_questions:
+  - What does the project documented in demand-forecast-docs forecast?
+  - Which metrics and categories does the forecasting in demand-forecast-docs cover?
+  eval_question: For how many product categories and which indicators does the demand-forecast-docs project give insights?
+  category: definition
+- id: demand-poetry-rule
+  source_path: demand-forecast-docs/latest/guide/overview.md
+  kind: procedural
+  evidence: Avoid changing the versions in the `pyproject.toml` file directly
+  key_facts:
+  - pyproject.toml
+  - poetry add
+  answer: According to demand-forecast-docs, avoid changing versions in pyproject.toml directly and use poetry add, because Poetry automatically takes care of the dependencies' inter-dependencies.
+  train_questions:
+  - How should dependencies be updated in the project of demand-forecast-docs?
+  - Can I edit pyproject.toml versions by hand in the demand-forecast-docs project?
+  eval_question: Why does the demand-forecast-docs guide discourage editing pyproject.toml versions by hand?
+  category: services
+- id: demand-task-image
+  source_path: demand-forecast-docs/latest/guide/overview.md
+  kind: conceptual
+  evidence: '**Task-images** are frozen images of the code at the moment of creation'
+  key_facts:
+  - frozen images
+  - commit
+  answer: In demand-forecast-docs, task-images are frozen images of the code at the moment of creation; they point to a specific commit in the git repository and are used to run tasks.
+  train_questions:
+  - What is a task-image according to demand-forecast-docs?
+  - What do task-images point to in the demand-forecast-docs project?
+  eval_question: In the Retail Data Application described by demand-forecast-docs, what is frozen in a task-image?
+  category: definition
+- id: demand-agendas
+  source_path: demand-forecast-docs/latest/guide/overview.md
+  kind: conceptual
+  evidence: '**Agendas**: agendas are regular executions of workflows or task-images'
+  key_facts:
+  - cron expression
+  answer: In demand-forecast-docs, agendas are regular executions of workflows or task-images, defined by a cron expression and the workflow or task-image to execute.
+  train_questions:
+  - What is an agenda in demand-forecast-docs?
+  - How are recurring executions defined in the demand-forecast-docs project?
+  eval_question: What defines an agenda in the Retail Data Application used by demand-forecast-docs?
+  category: definition
+- id: demand-env-tags
+  source_path: demand-forecast-docs/latest/guide/overview.md
+  kind: conceptual
+  evidence: The tag _dev_ is used for development and testing, _hml_ for staging, and _prd_ for production
+  key_facts:
+  - dev
+  - hml
+  - prd
+  answer: 'In demand-forecast-docs, task-image tags separate environments: dev is used for development and testing, hml for staging, and prd for production.'
+  train_questions:
+  - How are environments separated in the demand-forecast-docs project?
+  - What does the hml tag mean in demand-forecast-docs?
+  eval_question: Which image tag corresponds to each environment in the demand-forecast-docs project?
+  category: definition
+- id: demand-reconciliation
+  source_path: demand-forecast-docs/latest/guide/explicabilidad/diarizacion.md
+  kind: conceptual
+  evidence: Forecast Proportions seems to be the best option
+  key_facts:
+  - Forecast Proportions
+  - top-down
+  answer: demand-forecast-docs prefers Forecast Proportions to disaggregate monthly exogenous variables to a daily level, because it is not clear how top-down could be applied to a temporal hierarchy where
+    months have different lengths.
+  train_questions:
+  - Which reconciliation strategy does demand-forecast-docs choose for dailyization?
+  - Why is top-down not used for dailyization according to demand-forecast-docs?
+  eval_question: Between the two reconciliation strategies discussed for monthly variables in demand-forecast-docs, which one wins and why?
+  category: processing_flow
+- id: demand-toy-example
+  source_path: demand-forecast-docs/latest/guide/explicabilidad/diarizacion.md
+  kind: numeric
+  evidence: multiplying the base forecasts of the given month by $300/400 = 0.75$
+  key_facts:
+  - '0.75'
+  answer: In the demand-forecast-docs toy example, with a given total of 300 dollars and a base forecast of 400 dollars, the base forecasts of the month are multiplied by 300/400 = 0.75.
+  train_questions:
+  - What is the scaling factor in the dailyization toy example of demand-forecast-docs?
+  - In demand-forecast-docs, how are base forecasts re-scaled if the month total is 300 and their sum is 400?
+  eval_question: Using the forecast proportions example of demand-forecast-docs, what ratio is applied to go from a 400 base total to a 300 given total?
+  category: services
+- id: price-purpose
+  source_path: price-engine-api/latest/specs/swagger.yaml
+  kind: conceptual
+  evidence: Aplicación destinada a gestionar y modelar los ajustes de configuraciones de ventas del seller
+  key_facts:
+  - ajustes de configuraciones de ventas del seller
+  answer: price-engine-api es una aplicación destinada a gestionar y modelar los ajustes de configuraciones de ventas del seller.
+  train_questions:
+  - ¿Para qué sirve price-engine-api?
+  - ¿Qué gestiona la aplicación price-engine-api?
+  eval_question: Explica el propósito de la aplicación price-engine-api.
+  category: definition
+- id: price-empty-array
+  source_path: price-engine-api/latest/specs/swagger.yaml
+  kind: conceptual
+  evidence: Si el seller no tiene ajustes de configuracion de cobertura activos, este endpoint devolverá un array vacío
+  key_facts:
+  - array vacío
+  answer: Si el seller no tiene ajustes de configuración de cobertura activos, el endpoint de cobertura de price-engine-api devuelve un array vacío.
+  train_questions:
+  - ¿Qué devuelve price-engine-api si el seller no tiene ajustes de cobertura activos?
+  - ¿Cuál es la limitación documentada del endpoint de cobertura de price-engine-api?
+  eval_question: En price-engine-api, ¿cuál es la respuesta de cobertura para un seller sin ajustes activos?
+  category: api_functionality
+- id: price-sites
+  source_path: price-engine-api/latest/specs/swagger.yaml
+  kind: conceptual
+  evidence: 'enum: [ MLA, MLB, MLC, MCO, MLU, MPE, MLM, MEC ]'
+  key_facts:
+  - MLA
+  - MLB
+  - MLC
+  - MCO
+  - MLU
+  - MPE
+  - MLM
+  - MEC
+  answer: 'price-engine-api acepta estos valores de site_id: MLA, MLB, MLC, MCO, MLU, MPE, MLM y MEC.'
+  train_questions:
+  - ¿Qué valores de site_id acepta price-engine-api?
+  - ¿Cuáles son los sites válidos en price-engine-api?
+  eval_question: Enumera los códigos de site admitidos por price-engine-api.
+  category: configuration
+- id: unified-purpose
+  source_path: unified-transaction-configs/v0.0.2/guide/README.md
+  kind: conceptual
+  evidence: El fin de este proyecto es la carga de las distintas configuraciones de los distintos flujos
+  key_facts:
+  - configuraciones
+  - flujos
+  answer: El fin de unified-transaction-configs es la carga de las distintas configuraciones de los distintos flujos.
+  train_questions:
+  - ¿Cuál es el objetivo de unified-transaction-configs?
+  - ¿Para qué existe el proyecto unified-transaction-configs?
+  eval_question: Resume qué se hace en el proyecto unified-transaction-configs.
+  category: definition
+- id: unified-load
+  source_path: unified-transaction-configs/v0.0.2/guide/howto.md
+  kind: procedural
+  evidence:
+  - Mediante un PR a este mismo repositorio
+  - respetando la estructura de directior planteada
+  key_facts:
+  - PR
+  answer: En unified-transaction-configs, una configuración se carga mediante un PR al mismo repositorio, respetando la estructura de directorios planteada.
+  train_questions:
+  - ¿Cómo se carga una configuración en unified-transaction-configs?
+  - ¿Qué debo hacer para agregar una configuración a unified-transaction-configs?
+  eval_question: ¿Por qué vía se incorpora una configuración nueva en unified-transaction-configs?
+  category: processing_flow
+- id: unified-structure
+  source_path: unified-transaction-configs/v0.0.2/guide/howto.md
+  kind: conceptual
+  evidence: $AMBIENTE/$TIPO_ARCHIVO/$SO/$POITYPE/$VERSION/$SITE/$GRUPO_USUARIOS
+  key_facts:
+  - $AMBIENTE/$TIPO_ARCHIVO/$SO/$POITYPE/$VERSION/$SITE/$GRUPO_USUARIOS
+  answer: En unified-transaction-configs, la carpeta de un grupo de usuarios sigue la ruta $AMBIENTE/$TIPO_ARCHIVO/$SO/$POITYPE/$VERSION/$SITE/$GRUPO_USUARIOS.
+  train_questions:
+  - ¿Cuál es la jerarquía de carpetas de un grupo de usuarios en unified-transaction-configs?
+  - ¿Dónde se crea la carpeta de un grupo de usuarios en unified-transaction-configs?
+  eval_question: Indica la ruta completa, por niveles, donde va un grupo de usuarios de unified-transaction-configs.
+  category: architecture
+- id: unified-size-limit
+  source_path: unified-transaction-configs/v0.0.2/guide/howto.md
+  kind: numeric
+  evidence: El JSON no debe pesar más de 50kb, esta limitación es por KVS
+  key_facts:
+  - 50kb
+  - KVS
+  answer: En unified-transaction-configs, el JSON no debe pesar más de 50kb; esta limitación se debe a KVS.
+  train_questions:
+  - ¿Cuál es el tamaño máximo del JSON en unified-transaction-configs?
+  - ¿Por qué hay un límite de tamaño para los JSON de unified-transaction-configs?
+  eval_question: Tengo un JSON de 60kb para unified-transaction-configs. ¿Puedo cargarlo? Justifica con el límite documentado.
+  category: limitations
+  question_type: reasoning
+- id: unified-default-version
+  source_path: unified-transaction-configs/v0.0.2/guide/howto.md
+  kind: conceptual
+  evidence: Que exista siempre una versión default 0.0.0 o 0.0.0.0 con un grupo de usuario default y una configuración default
+  key_facts:
+  - 0.0.0
+  - 0.0.0.0
+  - default
+  answer: En unified-transaction-configs siempre debe existir una versión default 0.0.0 o 0.0.0.0, con un grupo de usuario default y una configuración default.
+  train_questions:
+  - ¿Qué versión debe existir siempre en unified-transaction-configs?
+  - ¿Qué valores default exige unified-transaction-configs?
+  eval_question: ¿Qué versión y elementos por defecto son obligatorios en unified-transaction-configs?
+  category: configuration
+- id: unified-users-file
+  source_path: unified-transaction-configs/v0.0.2/guide/howto.md
+  kind: procedural
+  evidence: '`users.json` con el siguiente cuerpo'
+  key_facts:
+  - users.json
+  answer: En unified-transaction-configs, la carpeta de un grupo de usuarios contiene un archivo users.json con la lista de usuarios en el campo users.
+  train_questions:
+  - ¿Qué archivo define un grupo de usuarios en unified-transaction-configs?
+  - ¿Cómo se declara la lista de usuarios de un grupo en unified-transaction-configs?
+  eval_question: ¿Cómo se llama el archivo con los usuarios de un grupo en unified-transaction-configs?
+  category: configuration
+- id: zenith-identity
+  source_path: zenith-keeper/1.1.6/guide/use-cases.md
+  kind: conceptual
+  evidence: Fresh products API documentation - sequence diagrams
+  key_facts:
+  - Fresh products API
+  answer: zenith-keeper documents the Fresh products API, and its use cases guide describes that API through sequence diagrams.
+  train_questions:
+  - Which API does zenith-keeper document?
+  - What do the use cases of zenith-keeper contain?
+  eval_question: Under which API name are the zenith-keeper use cases written?
+  category: definition
+- id: traffic-modules
+  source_path: traffic-gate-api/latest/guide/sections/arch.md
+  kind: conceptual
+  category: architecture
+  evidence:
+  - La aplicación traffic-gate tiene 3 módulos principales
+  - '**Módulo Job:**'
+  - '**Módulo Blacklist:**'
+  - '**Módulo Whitelist:**'
+  key_facts:
+  - 3 módulos
+  - Job
+  - Blacklist
+  - Whitelist
+  answer: 'traffic-gate-api tiene 3 módulos principales: Job, Blacklist y Whitelist.'
+  train_questions:
+  - ¿Qué módulos principales tiene traffic-gate-api?
+  - ¿Cómo se organiza traffic-gate-api en módulos?
+  eval_question: Nombra los módulos de la aplicación traffic-gate-api.
+abstentions:
+- id: stub-price-intro
+  source_path: price-engine-api/latest/guide/general.md
+  evidence:
+  - '## Introducción'
+  - TO DO.
+  answer: La sección de introducción de price-engine-api está sin completar, por lo que la documentación no ofrece esa información.
+  train_questions:
+  - ¿Qué dice la introducción de la guía de price-engine-api?
+  - ¿Qué contexto da la introducción general de price-engine-api?
+  eval_question: Resume la introducción de la guía general de price-engine-api.
+- id: stub-price-responsibilities
+  source_path: price-engine-api/latest/guide/general.md
+  evidence:
+  - Price Engine API no se responsabiliza por
+  - TO DO.
+  answer: La sección sobre lo que price-engine-api no cubre está sin completar, por lo que la documentación no lo indica.
+  train_questions:
+  - ¿De qué no se responsabiliza price-engine-api?
+  - ¿Qué queda fuera de la responsabilidad de price-engine-api?
+  eval_question: Enumera lo que está fuera del alcance de price-engine-api.
+- id: stub-price-flow
+  source_path: price-engine-api/latest/guide/flujos.md
+  evidence:
+  - '## Flujo 1 (endpoint)'
+  - Funcionamiento 1.
+  answer: La guía de flujos de price-engine-api solo contiene texto de relleno, por lo que no describe cómo funciona el flujo.
+  train_questions:
+  - ¿Cómo funciona el flujo 1 de price-engine-api?
+  - Describe los flujos documentados en la guía de price-engine-api.
+  eval_question: Explica paso a paso el flujo principal de price-engine-api.
+- id: stub-price-architecture
+  source_path: price-engine-api/latest/guide/arquitectura.md
+  evidence: Arquitectura
+  answer: La página de arquitectura de price-engine-api no tiene contenido textual, por lo que la documentación no describe sus componentes.
+  train_questions:
+  - ¿Cuáles son los componentes de arquitectura de price-engine-api?
+  - ¿Qué describe la página de arquitectura de price-engine-api?
+  eval_question: Describe la arquitectura interna de price-engine-api.
+- id: stub-order-protect-branch
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/bigq.md
+  evidence: '### Protect branch'
+  answer: The order-workflow-api BigQ guide has a heading for the protect branch message, but it does not describe that message.
+  train_questions:
+  - What does the protect branch BigQ message look like in order-workflow-api?
+  - Which fields does the protect branch message of order-workflow-api contain?
+  eval_question: Describe the payload of order-workflow-api's protect branch message.
+- id: stub-order-architecture
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/architecture.md
+  evidence: Architecture
+  answer: The order-workflow-api architecture page has no text content, so the documentation does not explain it there.
+  train_questions:
+  - What does the architecture page of order-workflow-api explain?
+  - How is the order-workflow-api architecture page organized?
+  eval_question: Summarize the order-workflow-api architecture page.
+- id: stub-order-test-jobs
+  source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/jobs.md
+  evidence: _Not configured_
+  answer: The order-workflow-api guide says jobs are not configured for the Test scope, so it does not document any test cron schedule.
+  must_not_contain:
+  - 0 12 * * *
+  - 0 20 * * *
+  train_questions:
+  - What cron schedule does order-workflow-api use in the Test scope?
+  - Which jobs does order-workflow-api run in Test?
+  eval_question: When does the midday job of order-workflow-api run in Test?
+- id: stub-zenith-guide
+  source_path: zenith-keeper/1.1.6/guide/README.md
+  evidence: '#'
+  answer: The zenith-keeper guide landing page has no real content, so it does not offer an overview of the service.
+  train_questions:
+  - What overview does the landing page of the zenith-keeper guide give?
+  - What does the README of the zenith-keeper guide explain?
+  eval_question: Summarize the introduction on the zenith-keeper guide's main page.
+- id: placeholder-vendor-password
+  source_path: vendor-stockkeeper-api/latest/guide/database.md
+  evidence: '**Password:** your_password'
+  answer: The vendor-stockkeeper-api documentation only shows a placeholder for the database password, so it does not state the real one.
+  must_not_contain:
+  - your_password
+  train_questions:
+  - What is the production database password of vendor-stockkeeper-api?
+  - Give me the database credentials for vendor-stockkeeper-api.
+  eval_question: Which password do I use for the inventprd database of vendor-stockkeeper-api?
+- id: placeholder-payment-token
+  source_path: payment-promise-gateway/latest/guide/README.md
+  evidence: AUTH_TOKEN="your-bearer-token"
+  answer: The payment-promise-gateway documentation only shows a placeholder bearer token, so it does not state a real one.
+  must_not_contain:
+  - your-bearer-token
+  train_questions:
+  - What bearer token should I use to call payment-promise-gateway?
+  - Give me a valid auth token for payment-promise-gateway.
+  eval_question: Which authorization token works against payment-promise-gateway?
+multi_source:
+# Reasoning rows: each answer needs two or more separate passages. Every quote must exist in the
+# cleaned source and every key fact must lie in its passage, or the entry is rejected.
+- id: multi-catalog-lifecycle
+  project: catalog-portfolio-api
+  category: services
+  sources:
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**STAND_BY**: Brand is created but not yet active'], key_facts: [STAND_BY]}
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**Main Logo**: At least one main logo must be uploaded'], key_facts: [main logo]}
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**DELETED**: Brand has been permanently removed'], key_facts: [permanently removed]}
+  answer: In catalog-portfolio-api, a STAND_BY brand needs at least one main logo before it can be activated. A deleted brand cannot come back, because DELETED means it has been permanently removed.
+  train_questions:
+  - A new brand in catalog-portfolio-api is still STAND_BY. What does it need before activation, and could it return after deletion?
+  - Walk me through what blocks a catalog-portfolio-api brand from going live, and what happens if it is later deleted.
+  eval_question: My catalog-portfolio-api brand is not active yet and I may delete it later. What is missing, and is deletion recoverable?
+- id: multi-catalog-logo-integration
+  project: catalog-portfolio-api
+  category: dependencies
+  sources:
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**Main Logo**: At least one main logo must be uploaded'], key_facts: [main logo]}
+  - {source_path: catalog-portfolio-api/latest/guide/architecture/README.md, evidence: ['**Pictures API**: Logo storage and management'], key_facts: [Pictures API]}
+  answer: Activating a brand in catalog-portfolio-api requires a main logo, and logo storage and management is the job of the Pictures API integration, so that integration matters for activation.
+  train_questions:
+  - Which external integration of catalog-portfolio-api is relevant to the logo requirement for activating a brand?
+  - Brand activation in catalog-portfolio-api asks for a logo. Which integration is behind logos?
+  eval_question: Why would a problem with Pictures API affect brand activation in catalog-portfolio-api?
+- id: multi-catalog-category-integration
+  project: catalog-portfolio-api
+  category: dependencies
+  sources:
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**Category Compliance**: Must comply with regulations service requirements'], key_facts: [regulations service]}
+  - {source_path: catalog-portfolio-api/latest/guide/architecture/README.md, evidence: ['**Regulations API**: Category and compliance validation'], key_facts: [Regulations API]}
+  answer: For catalog-portfolio-api, a brand must comply with regulations service requirements, and category and compliance validation runs through the Regulations API integration.
+  train_questions:
+  - In catalog-portfolio-api, how are the brand category compliance rule and the Regulations API related?
+  - Which integration of catalog-portfolio-api backs the category compliance requirement for brands?
+  eval_question: What connects the category compliance rule of catalog-portfolio-api brands with its external integrations?
+- id: multi-catalog-rate-limit
+  project: catalog-portfolio-api
+  category: limitations
+  derived_tokens: ['20', '1200']
+  sources:
+  - {source_path: catalog-portfolio-api/latest/guide/api-reference/README.md, evidence: ['**Rate Limit**: 1000 requests per minute per client'], key_facts: [1000 requests per minute]}
+  - {source_path: catalog-portfolio-api/latest/guide/architecture/README.md, evidence: ['**Response Time**: < 100ms for typical operations'], key_facts: [100ms]}
+  answer: A client of catalog-portfolio-api sending 20 requests per second makes 1200 per minute, which is above the documented limit of 1000 requests per minute per client, even though typical operations respond in under 100ms.
+  train_questions:
+  - Could one client of catalog-portfolio-api sustain 20 requests per second, given its rate limit and response times?
+  - Fast responses aside, is 20 requests per second from one client acceptable for catalog-portfolio-api?
+  eval_question: Operations in catalog-portfolio-api are quick. Does that mean one client may keep sending 20 requests each second?
+- id: multi-catalog-duplicate-name
+  project: catalog-portfolio-api
+  category: error_handling
+  sources:
+  - {source_path: catalog-portfolio-api/latest/guide/brand-management/README.md, evidence: ['**Name**: Must be unique within the site'], key_facts: [unique within the site]}
+  - {source_path: catalog-portfolio-api/latest/guide/troubleshooting/README.md, evidence: ['Name conflict within site'], key_facts: [brand_name_already_exists]}
+  answer: In catalog-portfolio-api, brand names must be unique within the site, so `brand_name_already_exists` points to a name conflict within that site.
+  train_questions:
+  - Which validation rule explains the `brand_name_already_exists` error in catalog-portfolio-api?
+  - Connect the brand name rule of catalog-portfolio-api with the error it produces when broken.
+  eval_question: Which rule is being broken when catalog-portfolio-api answers `brand_name_already_exists`?
+- id: multi-vendor-inbound-flow
+  project: vendor-stockkeeper-api
+  category: processing_flow
+  sources:
+  - {source_path: vendor-stockkeeper-api/latest/guide/introduction.md, evidence: ['one for 3PL stock movements (smaller quantities) and another for inbound movements'], key_facts: [inbound movements]}
+  - {source_path: vendor-stockkeeper-api/latest/guide/important.md, evidence: ['go to inbound conciliation to check if the items have the tags'], key_facts: [inbound conciliation]}
+  answer: A large movement in vendor-stockkeeper-api goes through the restock endpoint for inbound movements rather than the 3PL one. When testing that flow, first check in inbound conciliation whether the items have the test tags.
+  train_questions:
+  - I need to test a big restock in vendor-stockkeeper-api. Which endpoint type applies, and what do I check first?
+  - For a larger quantity in vendor-stockkeeper-api, which restock path fits, and which verification comes before sending it?
+  eval_question: Which vendor-stockkeeper-api restock route suits a large test movement, and where do I confirm its items beforehand?
+- id: multi-vendor-feed-trace
+  project: vendor-stockkeeper-api
+  category: processing_flow
+  sources:
+  - {source_path: vendor-stockkeeper-api/latest/guide/important.md, evidence: ['1p-3pl-integrator called 1p_3pl_product_stock_mov'], key_facts: [1p_3pl_product_stock_mov]}
+  - {source_path: vendor-stockkeeper-api/latest/guide/important.md, evidence: ['Which are: **[sap_sku, material_id, site_id, seller_id]**'], key_facts: [sap_sku, seller_id]}
+  answer: In the Feed flow of vendor-stockkeeper-api, query the 1p_3pl_product_stock_mov table of 1p-3pl-integrator with the Operation id; from it you obtain sap_sku, material_id, site_id and seller_id.
+  train_questions:
+  - Starting from an Operation id in the vendor-stockkeeper-api Feed flow, how do I reach the sap_sku?
+  - Which table leads to the key data needed to verify the Feed flow in vendor-stockkeeper-api, and what are those data?
+  eval_question: In the Feed flow verification of vendor-stockkeeper-api, where does seller_id come from and how do I look it up?
+- id: multi-vendor-alert-actions
+  project: vendor-stockkeeper-api
+  category: comparison
+  sources:
+  - {source_path: vendor-stockkeeper-api/latest/guide/alerts.md, evidence: ['Notify to **Envio Pack** that the restock could not be completed correctly'], key_facts: [Envio Pack]}
+  - {source_path: vendor-stockkeeper-api/latest/guide/alerts.md, evidence: ['a ticket should be raised in Shield to request the publication be blocked'], key_facts: [Shield]}
+  answer: The runbooks of vendor-stockkeeper-api differ in who gets involved. The negative quantity restock alert asks you to notify Envio Pack, while the stock update error alert may require raising a Shield ticket to block the publication.
+  train_questions:
+  - How do the follow-up actions differ between the negative quantity and stock update error alerts of vendor-stockkeeper-api?
+  - Compare who gets contacted for the negative quantity restock alert versus the stock update error alert in vendor-stockkeeper-api.
+  eval_question: In vendor-stockkeeper-api, which alert involves Envio Pack, which one involves Shield, and what is asked of each?
+- id: multi-traffic-jobs
+  project: traffic-gate-api
+  category: processing_flow
+  sources:
+  - {source_path: traffic-gate-api/latest/guide/sections/arch.md, evidence: ['Todos los 4 jobs que llaman el proceso de whitelist, se ejecutan cada minuto'], key_facts: [cada minuto]}
+  - {source_path: traffic-gate-api/latest/guide/sections/arch.md, evidence: ['solicitudes HTTP tipo POST únicamente y no está soportado el envío de un body'], key_facts: [POST]}
+  answer: En traffic-gate-api, los jobs de whitelist se ejecutan cada minuto y, como solo hacen solicitudes POST sin body, el scope debe enviarse como query param.
+  train_questions:
+  - ¿Con qué frecuencia corren los jobs de whitelist de traffic-gate-api y cómo reciben el scope?
+  - Si un job de whitelist de traffic-gate-api necesita un parámetro, ¿cómo lo envía y cada cuánto se ejecuta?
+  eval_question: ¿Por qué los jobs de whitelist de traffic-gate-api, que corren cada minuto, no pueden enviar el scope en el cuerpo?
+- id: multi-traffic-job-math
+  project: traffic-gate-api
+  category: architecture
+  sources:
+  - {source_path: traffic-gate-api/latest/guide/README.md, evidence: ['Se tienen 4 posibles valores para el scope: front, api, pci, pci_global'], key_facts: [pci_global]}
+  - {source_path: traffic-gate-api/latest/guide/sections/arch.md, evidence: ['tiene configurados en RetailHub 8 jobs, dos por cada uno de los 4 scopes'], key_facts: [8 jobs]}
+  answer: traffic-gate-api tiene 8 jobs porque hay dos por cada uno de sus 4 scopes (front, api, pci y pci_global).
+  train_questions:
+  - ¿Cómo se explica la cantidad de jobs de traffic-gate-api a partir de sus scopes?
+  - Relaciona los scopes de traffic-gate-api con el número de jobs configurados.
+  eval_question: ¿Por qué traffic-gate-api necesita exactamente 8 jobs?
+- id: multi-traffic-limits
+  project: traffic-gate-api
+  category: comparison
+  derived_tokens: ['800']
+  sources:
+  - {source_path: traffic-gate-api/latest/guide/sections/waf_config.md, evidence: ['a 1000 solicitudes cada 5 minutos'], key_facts: [1000 solicitudes]}
+  - {source_path: traffic-gate-api/latest/guide/sections/waf_config.md, evidence: ['a 200 solicitudes cada 5 minutos'], key_facts: [200 solicitudes]}
+  answer: En la documentación de traffic-gate-api, la regla para países RetailHub permite 1000 solicitudes cada 5 minutos y la de países No RetailHub, 200 solicitudes cada 5 minutos; es decir, 800 menos en la misma ventana.
+  train_questions:
+  - ¿Cuánto difieren los límites de ratelimit entre países RetailHub y No RetailHub en traffic-gate-api?
+  - Compara las reglas de ratelimit por tipo de país de traffic-gate-api.
+  eval_question: En traffic-gate-api, ¿qué tan distinta es la cuota por 5 minutos de un país No RetailHub frente a uno RetailHub?
+- id: multi-traffic-remove-ip
+  project: traffic-gate-api
+  category: processing_flow
+  sources:
+  - {source_path: traffic-gate-api/latest/guide/sections/database.md, evidence: ["se hace un borrado lógico en base de datos, actualizando el campo 'deleted' en true"], key_facts: [borrado lógico]}
+  - {source_path: traffic-gate-api/latest/guide/sections/waf_config.md, evidence: ['agregando o removiendo IPs dinámicamente, por medio de Vegeta-API'], key_facts: [Vegeta-API]}
+  answer: Al sacar una IP de una whitelist, traffic-gate-api hace un borrado lógico en base de datos (campo 'deleted' en true), y los IPSets del WAF cambian dinámicamente por medio de Vegeta-API.
+  train_questions:
+  - ¿Qué ocurre en la base de datos y en el WAF cuando una IP sale de una whitelist de traffic-gate-api?
+  - Describe los dos lados de retirar una IP de whitelist en traffic-gate-api.
+  eval_question: Si traffic-gate-api retira una IP de whitelist, ¿se elimina la fila y cómo se entera el WAF?
+- id: multi-payment-confirm-command
+  project: payment-promise-gateway
+  category: architecture
+  sources:
+  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Used for encapsulating request parameters'], key_facts: [encapsulating request parameters]}
+  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Requires LateFeeForgivenessProposalCommand for confirmation'], key_facts: [LateFeeForgivenessProposalCommand]}
+  answer: In payment-promise-gateway, the Command pattern encapsulates request parameters, and confirming a forgiveness proposal applies it through LateFeeForgivenessProposalCommand on PUT /forgiveness_proposal.
+  train_questions:
+  - How does the Command pattern show up when confirming a forgiveness proposal in payment-promise-gateway?
+  - Which design pattern shapes the confirmation request of a forgiveness proposal in payment-promise-gateway, and through which class?
+  eval_question: What role does LateFeeForgivenessProposalCommand play in the design of payment-promise-gateway?
+- id: multi-payment-forgiveness-steps
+  project: payment-promise-gateway
+  category: processing_flow
+  sources:
+  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Creates a late fee forgiveness proposal. Allows initiating the process'], key_facts: [POST /forgiveness_proposal]}
+  - {source_path: payment-promise-gateway/latest/guide/README.md, evidence: ['Confirms an existing late fee forgiveness proposal. Finalizes the forgiveness process'], key_facts: [PUT /forgiveness_proposal]}
+  answer: Late fee forgiveness in payment-promise-gateway takes two calls. POST /forgiveness_proposal creates the proposal and initiates the process, then PUT /forgiveness_proposal confirms it and finalizes the process.
+  train_questions:
+  - What is the order of calls to forgive a late fee in payment-promise-gateway?
+  - Which two endpoints start and finish late fee forgiveness in payment-promise-gateway?
+  eval_question: Is one call enough to forgive a late fee in payment-promise-gateway? Explain the sequence.
+- id: multi-2p-properties
+  project: 2p-revenue-optimizer-api
+  category: configuration
+  sources:
+  - {source_path: 2p-revenue-optimizer-api/latest/guide/README.md, evidence: ["it is identified from the last '-' of the name of the scope"], key_facts: ["last '-'"]}
+  - {source_path: 2p-revenue-optimizer-api/latest/guide/README.md, evidence: ['has preference over the property of **application.yml**'], key_facts: [application.yml]}
+  answer: In 2p-revenue-optimizer-api, the text after the last '-' of the scope name picks the suffix of the properties file, and a property defined in that file has preference over the same property in application.yml.
+  train_questions:
+  - How does the scope name of 2p-revenue-optimizer-api decide which property value wins?
+  - A property exists in application.yml and in the scope-specific file of 2p-revenue-optimizer-api. How is the file chosen, and which value applies?
+  eval_question: Trace how a scope name in 2p-revenue-optimizer-api ends up overriding a value of application.yml.
+- id: multi-2p-custom-fields-versions
+  project: 2p-revenue-optimizer-api
+  category: comparison
+  derived_tokens: ['0.2.2', latest]
+  sources:
+  - {source_path: 2p-revenue-optimizer-api/latest/guide/pages/table_data_dictionary/rule_custom_field.md, evidence: ['# rule_custom_field Table'], key_facts: [rule_custom_field]}
+  - {source_path: 2p-revenue-optimizer-api/0.2.2/guide/pages/table_data_dictionary/rule_row.md, evidence: ['| custom_fields | json | Null | Custom Fields |'], key_facts: [custom_fields]}
+  answer: In folder `latest`, 2p-revenue-optimizer-api has a `rule_custom_field` table. In version 0.2.2, `rule_row` has a `custom_fields` json field instead.
+  train_questions:
+  - How do the docs of 2p-revenue-optimizer-api store custom fields in `latest` compared with version 0.2.2?
+  - Compare where custom fields live in the `latest` and 0.2.2 data dictionaries of 2p-revenue-optimizer-api.
+  eval_question: Do the `latest` and 0.2.2 docs of 2p-revenue-optimizer-api agree on the storage of custom fields?
+- id: multi-order-protection-config
+  project: order-workflow-api
+  category: architecture
+  sources:
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Protect the important branches'], key_facts: [Protect the important branches]}
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/README.md, evidence: ['Workflow configuration (protected branches, releasable branches, etc.)'], key_facts: [Workflow configuration]}
+  answer: order-workflow-api protects the important branches, and the configuration saying which branches are protected or releasable is workflow configuration stored in its MySQL database.
+  train_questions:
+  - Where does order-workflow-api keep the information it needs to protect branches?
+  - Link the branch protection feature of order-workflow-api to its storage.
+  eval_question: If I need to know which branches order-workflow-api treats as protected, what kind of store holds that?
+- id: multi-order-local-setup
+  project: order-workflow-api
+  category: configuration
+  sources:
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/development.md, evidence: ['gh-proxy. To to this, create a file in `src/main/resources/workflow-gh-proxy.key`'], key_facts: [workflow-gh-proxy.key]}
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/development.md, evidence: ['and rename it to `application-local.yml`'], key_facts: [application-local.yml]}
+  answer: To work locally on order-workflow-api you prepare two files. Tests need `src/main/resources/workflow-gh-proxy.key` with the gh-proxy private key, and running the app needs `application-local.yml`, created from the `.dist` copy.
+  train_questions:
+  - Which local files must I prepare to test and run order-workflow-api?
+  - A new developer of order-workflow-api wants to run tests and the app. What must exist first?
+  eval_question: What separate files do tests and local execution of order-workflow-api each depend on?
+- id: multi-order-pipeline-entry
+  project: order-workflow-api
+  category: dependencies
+  sources:
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/bigq.md, evidence: ['| order-orchestrator | batesting-orchestrator.order-orchestrator-api | order-orchestrator-consumer | /pipeline/validate |'], key_facts: [/pipeline/validate]}
+  - {source_path: order-workflow-api/5.6.2-hotfix-1/guide/services/bigq.md, evidence: ['Upon receiving a "start work" message from the bigq topic'], key_facts: [start work]}
+  answer: In order-workflow-api, a "start work" message from the BigQ topic `batesting-orchestrator.order-orchestrator-api` reaches the `/pipeline/validate` path, and the service then fetches the full Pipeline from Orchestrator.
+  train_questions:
+  - How does pipeline validation begin in order-workflow-api, from the queue message to the data it fetches?
+  - Which queue route triggers pipeline validation in order-workflow-api, and what does the service do next?
+  eval_question: Trace a "start work" message through order-workflow-api until it has the Pipeline data.
+- id: multi-demand-agenda-image
+  project: demand-forecast-docs
+  category: definition
+  sources:
+  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Task-images** are frozen images of the code at the moment of creation'], key_facts: [frozen images]}
+  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Agendas**: agendas are regular executions of workflows or task-images'], key_facts: [cron expression]}
+  answer: In demand-forecast-docs, an agenda schedules runs through a cron expression, and it can execute a task-image, which is a frozen image of the code at the moment of creation.
+  train_questions:
+  - How do agendas and task-images relate in demand-forecast-docs?
+  - In demand-forecast-docs, what does an agenda run, and what does that thing freeze?
+  eval_question: Under demand-forecast-docs concepts, what ties a cron schedule to a frozen version of the code?
+- id: multi-demand-env-images
+  project: demand-forecast-docs
+  category: configuration
+  sources:
+  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['**Task-images** are frozen images of the code at the moment of creation'], key_facts: [Task-images]}
+  - {source_path: demand-forecast-docs/latest/guide/overview.md, evidence: ['The tag _dev_ is used for development and testing, _hml_ for staging, and _prd_ for production'], key_facts: [staging]}
+  answer: In demand-forecast-docs, task-images freeze the code, and their tags separate environments, with dev for development and testing, hml for staging, and prd for production.
+  train_questions:
+  - How do demand-forecast-docs use task-image tags to separate environments?
+  - In demand-forecast-docs, what distinguishes a staging task-image from a production one?
+  eval_question: Which piece of a frozen image tells demand-forecast-docs pipelines what environment it belongs to?
+- id: multi-demand-disaggregation
+  project: demand-forecast-docs
+  category: processing_flow
+  sources:
+  - {source_path: demand-forecast-docs/latest/guide/explicabilidad/diarizacion.md, evidence: ['Forecast Proportions seems to be the best option'], key_facts: [Forecast Proportions]}
+  - {source_path: demand-forecast-docs/latest/guide/explicabilidad/diarizacion.md, evidence: ['multiplying the base forecasts of the given month by $300/400 = 0.75$'], key_facts: ['0.75']}
+  answer: demand-forecast-docs prefers Forecast Proportions for disaggregation. In its toy example, a given total of 300 against a base forecast of 400 means multiplying the month's base forecasts by 0.75.
+  train_questions:
+  - Which disaggregation approach do the demand-forecast-docs prefer, and how does its toy example scale the base forecasts?
+  - Show how the proportions idea of demand-forecast-docs works with its numbers.
+  eval_question: With a monthly total of 300 and a base forecast of 400, what factor does the demand-forecast-docs method apply, and what is that method called?
+- id: multi-price-empty-coverage
+  project: price-engine-api
+  category: limitations
+  sources:
+  - {source_path: price-engine-api/latest/specs/swagger.yaml, evidence: ['enum: [ MLA, MLB, MLC, MCO, MLU, MPE, MLM, MEC ]'], key_facts: [MLA]}
+  - {source_path: price-engine-api/latest/specs/swagger.yaml, evidence: ['Si el seller no tiene ajustes de configuracion de cobertura activos, este endpoint devolverá un array vacío'], key_facts: [array vacío]}
+  answer: En price-engine-api, una consulta de cobertura con un site_id válido como MLA puede devolver un array vacío, lo que significa que el seller no tiene ajustes de configuración de cobertura activos; no indica un site_id inválido.
+  train_questions:
+  - Consulté la cobertura de price-engine-api con site_id MLA y recibí un array vacío. ¿Cómo lo interpreto?
+  - En price-engine-api, ¿un array vacío de cobertura con un site_id admitido significa que el site está mal?
+  eval_question: ¿Qué concluyo si price-engine-api responde sin ajustes de cobertura para un sitio admitido como MLA?
+- id: multi-unified-oversize
+  project: unified-transaction-configs
+  category: limitations
+  derived_tokens: ['60kb']
+  sources:
+  - {source_path: unified-transaction-configs/v0.0.2/guide/howto.md, evidence: ['Mediante un PR a este mismo repositorio'], key_facts: [PR]}
+  - {source_path: unified-transaction-configs/v0.0.2/guide/howto.md, evidence: ['El JSON no debe pesar más de 50kb, esta limitación es por KVS'], key_facts: [50kb, KVS]}
+  answer: En unified-transaction-configs la carga es mediante un PR, pero un JSON de 60kb no es válido, ya que el JSON no debe pesar más de 50kb; esta limitación es por KVS.
+  train_questions:
+  - Quiero subir por PR un JSON de 60kb a unified-transaction-configs. ¿Es válido?
+  - ¿Qué impide cargar por PR una configuración de 60kb en unified-transaction-configs?
+  eval_question: ¿Cumple las reglas de carga de unified-transaction-configs un archivo JSON de 60kb? Justifica.
+- id: multi-unified-group-folder
+  project: unified-transaction-configs
+  category: configuration
+  sources:
+  - {source_path: unified-transaction-configs/v0.0.2/guide/howto.md, evidence: ['$AMBIENTE/$TIPO_ARCHIVO/$SO/$POITYPE/$VERSION/$SITE/$GRUPO_USUARIOS'], key_facts: [$GRUPO_USUARIOS]}
+  - {source_path: unified-transaction-configs/v0.0.2/guide/howto.md, evidence: ['`users.json` con el siguiente cuerpo'], key_facts: [users.json]}
+  answer: En unified-transaction-configs, un grupo de usuarios tiene su carpeta en $AMBIENTE/$TIPO_ARCHIVO/$SO/$POITYPE/$VERSION/$SITE/$GRUPO_USUARIOS, y esa carpeta contiene el archivo users.json.
+  train_questions:
+  - ¿Dónde se ubica y qué archivo lleva un grupo de usuarios en unified-transaction-configs?
+  - Para agregar un grupo de usuarios a unified-transaction-configs, ¿qué ruta y qué archivo se necesitan?
+  eval_question: ¿En qué lugar del árbol de unified-transaction-configs debo crear users.json para un grupo?
+- id: multi-zenith-order-errors
+  project: zenith-keeper
+  category: error_handling
+  sources:
+  - {source_path: zenith-keeper/1.1.6/guide/use-cases.md, evidence: ['S-->>C: ProductsWithoutStockException'], key_facts: [ProductsWithoutStockException]}
+  - {source_path: zenith-keeper/1.1.6/guide/use-cases.md, evidence: ['S-->>C: WarehousesWithoutStockException'], key_facts: [WarehousesWithoutStockException]}
+  answer: The purchase order flows of zenith-keeper have two different lack-of-stock exceptions, `ProductsWithoutStockException` and `WarehousesWithoutStockException`, and the sequence diagrams show HTTP 404 for both.
+  train_questions:
+  - Which exceptions of zenith-keeper signal missing stock in purchase orders, and how do they reach the caller?
+  - Compare the stock-related exceptions shown in the zenith-keeper use cases.
+  eval_question: Can an HTTP status from zenith-keeper alone tell a product stock problem from a warehouse stock problem?
