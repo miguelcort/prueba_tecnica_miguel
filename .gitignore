@@ -4,3 +4,10 @@ __pycache__/
 logs/
 work/
 .env
+.atl
+
+# HyperFrames (the rendered docs/video/explainer.mp4 stays tracked)
+.agents/skills/hyperframes-cli/
+skills-lock.json
+docs/video/hyperframes/
+.hf-tmp/
