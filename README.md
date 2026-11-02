@@ -182,3 +182,4 @@ E0 y E1, porque no entrenan y fijan la línea que cualquier entrenamiento debe s
 
 - [EXPERIMENT.md](EXPERIMENT.md): hipótesis, brazos E0 a E4, métricas y criterios de decisión.
 - [reports/summary.md](reports/summary.md): resumen de calidad.
+- [Presentación en Google Drive](https://docs.google.com/presentation/d/1FnoXjosHr8nlPvqhcNjMQBC6CdFYagPf/edit?usp=sharing&ouid=112428884312748451969&rtpof=true&sd=true): material para la entrevista, con el diseño del experimento.
