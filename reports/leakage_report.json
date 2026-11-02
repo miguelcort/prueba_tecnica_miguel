@@ -1,9 +1,12 @@
 {
   "counts": {
     "answer_overlap_with_sft": 0,
-    "answer_partial_key_overlap_with_sft": 10,
+    "answer_partial_key_overlap_with_sft": 18,
     "document_holdout_answers_in_cpt": 0,
-    "fact_holdout_answers_in_cpt_by_design": 39,
+    "document_holdout_evidence_partly_trained": 4,
+    "document_holdout_keys_only_in_other_project_cpt": 2,
+    "fact_holdout_answers_in_cpt_by_design": 43,
+    "fact_holdout_reassigned_from_document_holdout": 6,
     "question_exact_or_semantic_overlap_with_sft": 0,
     "question_high_jaccard_with_other_identifiers": 33,
     "sft_facts_in_eval": 0
@@ -52,5 +55,5 @@
     },
     "reason": "the facts are specific to each service, so a held-out project leaves closed-book arms with nothing to learn about it and only measures retrieval"
   },
-  "reading_guide": "fact_holdout answers are in CPT by design: that tier measures transfer from CPT. Partial key overlap means one key fact, not the whole answer, also appears in an SFT answer. High Jaccard with other identifiers means the same template about another subject."
+  "reading_guide": "fact_holdout answers are in CPT by design: that tier measures transfer from CPT. Overlap is compared per project, by whole token, ignoring evaluation.generic_keys. document_holdout_evidence_partly_trained rows keep a key out of training, so they test retrieval, but closed-book behavior is not scored on them. Partial key overlap means one key fact, not the whole answer, also appears in an SFT answer. High Jaccard with other identifiers means the same template about another subject."
 }

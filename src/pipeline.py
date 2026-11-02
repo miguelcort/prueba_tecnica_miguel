@@ -33,8 +33,8 @@ def stage_outputs(config: Config) -> Dict[str, List[Path]]:
         "curation": [processed(name) for name in ("documents_cleaned.jsonl", "documents_rejected.jsonl", "chunks.jsonl", "facts.jsonl", "holdout.json", "curation_stats.json")] + [reports / "deduplication_report.json"],
         "cpt": [config.output("cpt"), processed("cpt_stats.json")],
         "sft": [config.output("sft"), processed("sft_pending_review.jsonl"), processed("fact_split.json"), processed("abstentions.jsonl"), processed("sft_stats.json")],
-        "evaluation": [config.output("eval"), reports / "sft_recall_probe.jsonl", processed("evaluation_stats.json")],
-        "validation": [reports / name for name in ("data_quality.json", "dataset_statistics.json", "leakage_report.json", "summary.md")],
+        "evaluation": [config.output("eval"), reports / "sft_recall_probe.jsonl", reports / "neutral_eval.jsonl", reports / "training_validation_split.json", processed("evaluation_stats.json")],
+        "validation": [reports / name for name in ("data_quality.json", "dataset_statistics.json", "leakage_report.json", "constant_baseline.json", "summary.md")],
     }
 
 

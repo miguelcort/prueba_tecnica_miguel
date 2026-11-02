@@ -32,13 +32,13 @@
   "eval": {
     "by_behavior": {
       "abstain": 23,
-      "answer": 51,
+      "answer": 50,
       "answer_multi_source": 15
     },
     "by_category": {
       "abstention": 23,
-      "api_functionality": 5,
-      "architecture": 13,
+      "api_functionality": 4,
+      "architecture": 14,
       "comparison": 4,
       "configuration": 11,
       "definition": 3,
@@ -47,35 +47,51 @@
       "limitations": 2,
       "parameters": 8,
       "processing_flow": 3,
-      "services": 3
+      "services": 2
     },
     "by_difficulty": {
-      "easy": 41,
+      "easy": 40,
       "hard": 33,
       "medium": 15
     },
     "by_language": {
-      "en": 68,
+      "en": 67,
       "es": 21
     },
     "by_project": {
       "2p-revenue-optimizer-api": 10,
-      "catalog-portfolio-api": 23,
-      "demand-forecast-docs": 5,
+      "catalog-portfolio-api": 24,
+      "demand-forecast-docs": 4,
       "order-workflow-api": 11,
       "payment-promise-gateway": 6,
       "price-engine-api": 5,
       "traffic-gate-api": 12,
       "unified-transaction-configs": 4,
-      "vendor-stockkeeper-api": 9,
+      "vendor-stockkeeper-api": 8,
       "zenith-keeper": 4
     },
     "by_tier": {
-      "document_holdout": 27,
-      "fact_holdout": 39,
+      "document_holdout": 22,
+      "fact_holdout": 43,
       "unanswerable": 23
     },
-    "rows": 89
+    "rows": 88
+  },
+  "neutral_eval": {
+    "by_project": {
+      "2p-revenue-optimizer-api": 2,
+      "catalog-portfolio-api": 18,
+      "demand-forecast-docs": 5,
+      "order-workflow-api": 7,
+      "payment-promise-gateway": 5,
+      "price-engine-api": 3,
+      "traffic-gate-api": 8,
+      "unified-transaction-configs": 6,
+      "vendor-stockkeeper-api": 7,
+      "zenith-keeper": 3
+    },
+    "note": "facts taught by both CPT and SFT, under an unseen wording; not part of the leakage-free evaluation",
+    "rows": 64
   },
   "sft": {
     "avg_answer_chars": 138.4,

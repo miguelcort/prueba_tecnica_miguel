@@ -11,3 +11,14 @@ work/
 skills-lock.json
 docs/video/hyperframes/
 .hf-tmp/
+
+# Challenge statement
+candidate-take-home-etl.pdf
+
+# Internal work, not part of the deliverable
+reviews/
+.claude/
+
+.DS_Store
+
+reviews/

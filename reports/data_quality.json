@@ -20,9 +20,7 @@
   "documents_version_variants": 6,
   "documents_with_todo_markers": 4,
   "evaluation_dropped": {
-    "document_holdout_answer_also_in_sft": 1,
-    "fact_holdout_answer_also_in_sft": 21,
-    "question_also_in_sft_or_duplicate": 1
+    "fact_holdout_answer_also_in_sft": 24
   },
   "fact_conflicts": [
     {
@@ -448,20 +446,23 @@
     "errors": {},
     "evaluation_by_behavior": {
       "abstain": 23,
-      "answer": 51,
+      "answer": 50,
       "answer_multi_source": 15
     },
     "evaluation_by_tier": {
-      "document_holdout": 27,
-      "fact_holdout": 39,
+      "document_holdout": 22,
+      "fact_holdout": 43,
       "unanswerable": 23
     },
     "examples": {},
     "leakage": {
       "answer_overlap_with_sft": 0,
-      "answer_partial_key_overlap_with_sft": 10,
+      "answer_partial_key_overlap_with_sft": 18,
       "document_holdout_answers_in_cpt": 0,
-      "fact_holdout_answers_in_cpt_by_design": 39,
+      "document_holdout_evidence_partly_trained": 4,
+      "document_holdout_keys_only_in_other_project_cpt": 2,
+      "fact_holdout_answers_in_cpt_by_design": 43,
+      "fact_holdout_reassigned_from_document_holdout": 6,
       "question_exact_or_semantic_overlap_with_sft": 0,
       "question_high_jaccard_with_other_identifiers": 33,
       "sft_facts_in_eval": 0
@@ -474,7 +475,7 @@
     },
     "rows_checked": {
       "cpt": 203,
-      "eval": 89,
+      "eval": 88,
       "sft": 400
     }
   }

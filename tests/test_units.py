@@ -11,6 +11,7 @@ from src.filtering.filters import rejection_reason
 from src.ingestion.ingest import classify_role, manifest_version, resolve_canonical_folder
 from src.preprocessing.normalize import normalize_lines, redact, strip_blocks
 from src.sft.facts import locate_evidence, resolve_conflicts
+from src.evaluation.auxiliary import constant_answers, passes_constant, training_validation_split
 from src.evaluation.build import answer_present
 from src.provenance.provenance import Verifier
 from src.sft.grounding import check_grounding
@@ -179,8 +180,24 @@ def test_template_siblings_about_other_identifiers_are_not_duplicates():
 
 
 def test_short_keys_do_not_prove_answer_overlap():
-    assert not answer_present(["int"], "column is int", 12)
-    assert answer_present(["1000 requests per minute"], "limit: 1000 requests per minute", 12)
+    assert not answer_present(["int"], ["column is int"], ["int"])
+    assert answer_present(["1000 requests per minute"], ["limit: 1000 requests per minute"], ["int"])
+
+
+def test_short_specific_keys_count_without_a_minimum_length():
+    assert answer_present(["DataDog"], ["monitoring: datadog dashboard"], ["int"])
+    assert answer_present(["Gradle 7.3"], ["gradle 7.3 or higher"], [])
+
+
+def test_keys_spread_across_texts_count_and_generic_keys_are_ignored():
+    assert answer_present(["100ms", "1000 requests"], ["under 100ms", "limit of 1000 requests"], [])
+    assert answer_present(["GET", "/brands"], ["path /brands"], ["GET"])
+    assert not answer_present(["100ms", "1000 requests"], ["under 100ms"], [])
+
+
+def test_keys_match_whole_tokens_only():
+    assert not answer_present(["inbound"], ["the inbound_id field"], [])
+    assert not answer_present(["int"], ["print the value"], [])
 
 
 def test_language_heuristic_flags_english_inside_spanish_services():
@@ -202,3 +219,21 @@ def test_provenance_verifier_checks_every_field(tmp_path):
         assert verifier.errors({**good, field: bad})
     assert verifier.errors({"source_file": "x"}) == ["missing provenance field"]
     assert verifier.errors({**good, "sources": [{**good, "source_hash": "x"}]})
+
+
+def test_constant_answer_passes_only_when_every_key_is_there_and_nothing_forbidden():
+    item = {"question": "Is `id` a string?", "key_facts": ["string"], "must_not_contain": []}
+    answers = constant_answers(item, ["string", "int"])
+    assert passes_constant(item, answers["generic_only"]) and passes_constant(item, answers["question_echo"])
+    assert not passes_constant({**item, "must_not_contain": ["int"]}, answers["generic_only"])
+    assert not passes_constant({**item, "key_facts": []}, answers["generic_only"])
+
+
+def test_validation_split_keeps_facts_together_and_protects_what_evaluation_needs():
+    sft = [{"id": f"s{i}", "metadata": {"project": "p", "fact_id": f"f{i // 2}"}} for i in range(40)]
+    cpt = [{"id": f"c{i}", "metadata": {"project": "p"}, "provenance": {"document_id": "d", "section": f"s{i}", "chunk_id": f"k{i}"}} for i in range(40)]
+    split = training_validation_split(sft, cpt, {"f0"}, {"k1"}, 0.1, 42)
+    assert split == training_validation_split(sft, cpt, {"f0"}, {"k1"}, 0.1, 42)
+    held = {row["metadata"]["fact_id"] for row in sft if row["id"] in split["sft_validation_ids"]}
+    assert held == set(split["sft_validation_fact_ids"]) and "f0" not in held and len(split["sft_validation_ids"]) == 2 * len(held)
+    assert "k1" not in split["cpt_validation_chunk_ids"] and split["cpt_validation_ids"]

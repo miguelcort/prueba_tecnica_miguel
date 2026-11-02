@@ -1,0 +1,114 @@
+{
+  "note": "Fixed answers scored with key_facts and must_not_contain. No model was run. This is a floor, not a result: key_facts can pass an answer that is wrong.",
+  "sets": {
+    "all_answerable": {
+      "answerable_rows": 65,
+      "floor_fact_ids": [
+        "fact_136cd6b1b108fc9b",
+        "fact_3278146f2bc63fc7",
+        "fact_3d0e5f0b7a68fc95",
+        "fact_59068e46dc8e303c",
+        "fact_768c1d2f3c95af7d",
+        "fact_a4848a56c44003e4",
+        "fact_b2c1ca6e451b478c",
+        "fact_cb2ead1f317d5a51",
+        "fact_d11275512e71af6f",
+        "fact_e536465f48ba318c",
+        "fact_e59d0bf555ec662b"
+      ],
+      "passed": {
+        "generic_only": 9,
+        "question_echo": 2,
+        "question_echo_plus_generic": 11
+      },
+      "passed_percent": {
+        "generic_only": 13.8,
+        "question_echo": 3.1,
+        "question_echo_plus_generic": 16.9
+      }
+    },
+    "document_holdout": {
+      "answerable_rows": 22,
+      "floor_fact_ids": [],
+      "passed": {
+        "generic_only": 0,
+        "question_echo": 0,
+        "question_echo_plus_generic": 0
+      },
+      "passed_percent": {
+        "generic_only": 0.0,
+        "question_echo": 0.0,
+        "question_echo_plus_generic": 0.0
+      }
+    },
+    "fact_holdout": {
+      "answerable_rows": 43,
+      "floor_fact_ids": [
+        "fact_136cd6b1b108fc9b",
+        "fact_3278146f2bc63fc7",
+        "fact_3d0e5f0b7a68fc95",
+        "fact_59068e46dc8e303c",
+        "fact_768c1d2f3c95af7d",
+        "fact_a4848a56c44003e4",
+        "fact_b2c1ca6e451b478c",
+        "fact_cb2ead1f317d5a51",
+        "fact_d11275512e71af6f",
+        "fact_e536465f48ba318c",
+        "fact_e59d0bf555ec662b"
+      ],
+      "passed": {
+        "generic_only": 9,
+        "question_echo": 2,
+        "question_echo_plus_generic": 11
+      },
+      "passed_percent": {
+        "generic_only": 20.9,
+        "question_echo": 4.7,
+        "question_echo_plus_generic": 25.6
+      }
+    },
+    "neutral": {
+      "answerable_rows": 64,
+      "floor_fact_ids": [],
+      "passed": {
+        "generic_only": 0,
+        "question_echo": 0,
+        "question_echo_plus_generic": 0
+      },
+      "passed_percent": {
+        "generic_only": 0.0,
+        "question_echo": 0.0,
+        "question_echo_plus_generic": 0.0
+      }
+    },
+    "sft_recall_probe": {
+      "answerable_rows": 33,
+      "floor_fact_ids": [
+        "fact_11828752d5165b16",
+        "fact_2f46a0beec2f876c",
+        "fact_3032d4a984b77c51",
+        "fact_394319190b044857",
+        "fact_39440c333812ac05",
+        "fact_3fd32677d16a8cc7",
+        "fact_677bd9fe723406fe",
+        "fact_869143dbae6a56dd",
+        "fact_a8d5720add4d5ee0",
+        "fact_ab94602cef6cd8a6",
+        "fact_bb74e148a89a3dea",
+        "fact_eb7a5e8c93055061",
+        "fact_efea2c15ebb8a6d3",
+        "fact_fd4db01118d1d320"
+      ],
+      "passed": {
+        "generic_only": 6,
+        "question_echo": 5,
+        "question_echo_plus_generic": 14
+      },
+      "passed_percent": {
+        "generic_only": 18.2,
+        "question_echo": 15.2,
+        "question_echo_plus_generic": 42.4
+      }
+    }
+  }
+}

@@ -8,7 +8,7 @@ from typing import Dict, List
 from ..common import Config, iter_jsonl, normalize_question, normalize_text, read_json, require, same_question, token_jaccard
 from ..cpt.build import JUNK
 from ..deduplication.dedup import minhash, similarity
-from ..evaluation.build import answer_present
+from ..evaluation.build import answer_present, key_in_text, specific_keys
 from ..ingestion.ingest import tree_digest
 from ..preprocessing.normalize import EMAIL, PUBLIC_HOSTS, SLACK_CHANNEL, normalize_lines
 from ..provenance.provenance import Verifier
@@ -174,12 +174,18 @@ def run(config: Config) -> dict:
         sft_questions[key] = question
         sft_answers.append(answer)
         sft_facts.add(meta["fact_id"])
-    sft_norm = [normalize_text(answer) for answer in sft_answers]
+    sft_by_project: Dict[str, List[str]] = {}
+    for row in sft_rows:
+        sft_by_project.setdefault(row["metadata"]["project"], []).append(normalize_text(row["messages"][1]["content"]))
 
     # --- evaluation
     tiers: Counter = Counter()
     behaviors: Counter = Counter()
     cpt_text = {row["provenance"]["chunk_id"]: normalize_text(row["text"]) for row in cpt_rows if isinstance(row.get("provenance"), dict)}
+    cpt_by_project: Dict[str, List[str]] = {}
+    for row in cpt_rows:
+        if isinstance(row.get("provenance"), dict):
+            cpt_by_project.setdefault(row["metadata"]["project"], []).append(cpt_text[row["provenance"]["chunk_id"]])
     seen_questions = set()
     leakage = {
         "question_exact_or_semantic_overlap_with_sft": 0,
@@ -188,10 +194,13 @@ def run(config: Config) -> dict:
         "answer_partial_key_overlap_with_sft": 0,
         "fact_holdout_answers_in_cpt_by_design": 0,
         "document_holdout_answers_in_cpt": 0,
+        "document_holdout_keys_only_in_other_project_cpt": 0,
+        "document_holdout_evidence_partly_trained": 0,
+        "fact_holdout_reassigned_from_document_holdout": 0,
         "sft_facts_in_eval": 0,
     }
     question_threshold, answer_threshold = settings["question_jaccard_threshold"], settings["answer_jaccard_threshold"]
-    specific = settings["min_specific_key_chars"]
+    generic = settings["generic_keys"]
     for item in iter_jsonl(config.output("eval")):
         where = f"eval {item.get('id')}"
         if not EVAL_KEYS <= set(item) or item["tier"] not in TIERS or item["expected_behavior"] not in BEHAVIORS or item["difficulty"] not in DIFFICULTIES or not item["evidence"] or not isinstance(item.get("provenance"), dict):
@@ -229,23 +238,32 @@ def run(config: Config) -> dict:
         for key_fact in keys:
             if not verifier.text_contains(item["provenance"], key_fact):
                 checker.fail("grounding", f"{where}: key fact not in raw source: {key_fact}")
-        if any(answer_present(keys, text, specific) for text in sft_norm) or any(token_jaccard(answer, other) >= answer_threshold for other in sft_answers):
+        project_sft = sft_by_project.get(item["project"], [])
+        project_cpt = cpt_by_project.get(item["project"], [])
+        if any(answer_present(keys, [text], generic) for text in project_sft) or any(token_jaccard(answer, other) >= answer_threshold for other in sft_answers):
             leakage["answer_overlap_with_sft"] += 1
             checker.fail("leakage", f"{where}: answer present in SFT")
-        elif any(normalize_text(k) in text for k in keys if len(k) >= specific for text in sft_norm):
+        elif any(key_in_text(k, text) for k in specific_keys(keys, generic) for text in project_sft):
             leakage["answer_partial_key_overlap_with_sft"] += 1
         if tier == "fact_holdout":
-            cited = " ".join(cpt_text.get(evidence["chunk_id"] or "", "") for evidence in item["evidence"])
+            cited = " ".join(cpt_text.get(chunk or "", "") for chunk in [evidence["chunk_id"] for evidence in item["evidence"]] + item.get("cpt_support", []))
             if not all(normalize_text(k) in cited for k in keys):
                 checker.fail("tier_rule", f"{where}: fact_holdout not supported by CPT")
             leakage["fact_holdout_answers_in_cpt_by_design"] += 1
+            leakage["fact_holdout_reassigned_from_document_holdout"] += "reassigned_from" in item
         if tier == "document_holdout":
             evidence_docs = {evidence["document_id"] for evidence in item["evidence"]}
             if not evidence_docs & set(holdout["document_ids"]):
                 checker.fail("tier_rule", f"{where}: not from a held-out document")
-            if any(answer_present(keys, text, specific) for text in cpt_text.values()):
+            if evidence_docs - set(holdout["document_ids"]):
+                leakage["document_holdout_evidence_partly_trained"] += 1
+                if item["closed_book_expected_behavior"] != "not_scored":
+                    checker.fail("tier_rule", f"{where}: closed-book behavior scored on partly trained evidence")
+            if answer_present(keys, project_cpt, generic):
                 leakage["document_holdout_answers_in_cpt"] += 1
-                checker.fail("leakage", f"{where}: answer found in CPT")
+                checker.fail("leakage", f"{where}: answer found in CPT of its project")
+            elif answer_present(keys, cpt_text.values(), generic):
+                leakage["document_holdout_keys_only_in_other_project_cpt"] += 1
 
     missing = sorted(TIERS - set(tiers))
     if missing:

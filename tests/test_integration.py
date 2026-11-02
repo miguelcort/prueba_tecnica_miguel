@@ -5,7 +5,8 @@ import shutil
 from pathlib import Path
 
 from conftest import ROOT, make_project
-from src.common import iter_jsonl, load_config, normalize_question, sha256_file
+from src.common import iter_jsonl, load_config, normalize_question, normalize_text, sha256_file
+from src.evaluation.build import answer_present
 from src.ingestion.ingest import tree_digest
 from src.pipeline import STAGES, main
 from src.validation.validate import run as validate
@@ -213,3 +214,89 @@ def test_validation_catches_a_secret_and_fails_the_cli(built_project, tmp_path):
     _rewrite(project / "outputs/cpt.jsonl", plant)
     assert "sensitive_data" in validate(load_config(config_of(project)))["errors"]
     assert main(["--config", config_of(project), "--stage", "validation", "--force"]) == 1
+
+
+def _short_key_row(project: Path) -> dict:
+    return next(r for r in rows(project, "outputs/eval.jsonl") if r["tier"] == "document_holdout" and r["key_facts"] == ["Jetty"])
+
+
+def _plant_in_cpt(project: Path, word: str, same_project: bool, source: str) -> None:
+    def plant(lines):
+        next(line for line in lines if (line["metadata"]["project"] == source) == same_project)["text"] += f" {word}"
+
+    _rewrite(project / "outputs/cpt.jsonl", plant)
+
+
+def test_validation_catches_a_short_key_of_a_held_out_row_in_cpt_of_its_project(built_project, tmp_path):
+    project = _copy_built(built_project, tmp_path / "short_leak")
+    target = _short_key_row(project)
+    _plant_in_cpt(project, "Jetty", True, target["project"])
+    report = validate(load_config(config_of(project)))
+    assert report["leakage"]["document_holdout_answers_in_cpt"] == 1 and "leakage" in report["errors"]
+
+
+def test_a_key_in_another_project_is_reported_but_is_not_a_leak(built_project, tmp_path):
+    project = _copy_built(built_project, tmp_path / "cross_project")
+    target = _short_key_row(project)
+    baseline = validate(load_config(config_of(project)))["leakage"]["document_holdout_keys_only_in_other_project_cpt"]
+    _plant_in_cpt(project, "Jetty", False, target["project"])
+    leakage = validate(load_config(config_of(project)))["leakage"]
+    assert leakage["document_holdout_answers_in_cpt"] == 0 and leakage["document_holdout_keys_only_in_other_project_cpt"] == baseline + 1
+
+
+def test_no_document_holdout_row_has_its_specific_keys_in_cpt_of_its_project(built_project):
+    settings = load_config(config_of(built_project))["evaluation"]
+    cpt = rows(built_project, "outputs/cpt.jsonl")
+    held = [r for r in rows(built_project, "outputs/eval.jsonl") if r["tier"] == "document_holdout"]
+    assert held
+    for item in held:
+        texts = [normalize_text(c["text"]) for c in cpt if c["metadata"]["project"] == item["project"]]
+        assert not answer_present(item["key_facts"], texts, settings["generic_keys"]), item["id"]
+
+
+def test_reassigned_rows_are_supported_by_cpt_and_keep_their_source(built_project):
+    cpt = {r["provenance"]["chunk_id"]: normalize_text(r["text"]) for r in rows(built_project, "outputs/cpt.jsonl")}
+    holdout = json.loads((built_project / "work/processed/holdout.json").read_text())
+    moved = [r for r in rows(built_project, "outputs/eval.jsonl") if r.get("reassigned_from") == "document_holdout"]
+    assert moved
+    for item in moved:
+        assert item["tier"] == "fact_holdout" and item["closed_book_expected_behavior"] == "answer"
+        assert {e["document_id"] for e in item["evidence"]} & set(holdout["document_ids"])
+        supported = " ".join(cpt[chunk] for chunk in item["cpt_support"])
+        assert all(normalize_text(key) in supported for key in item["key_facts"])
+
+
+def test_partly_trained_evidence_is_not_scored_closed_book(built_project):
+    holdout = set(json.loads((built_project / "work/processed/holdout.json").read_text())["document_ids"])
+    held = [r for r in rows(built_project, "outputs/eval.jsonl") if r["tier"] == "document_holdout"]
+    mixed = [r for r in held if {e["document_id"] for e in r["evidence"]} - holdout]
+    assert mixed and all(r["closed_book_expected_behavior"] == "not_scored" for r in mixed)
+    assert all(r["closed_book_expected_behavior"] == "abstain" for r in held if r not in mixed)
+
+
+def test_validation_split_leaves_evaluation_support_in_training(built_project):
+    split = json.loads((built_project / "reports/training_validation_split.json").read_text())
+    evaluation = rows(built_project, "outputs/eval.jsonl")
+    neutral = rows(built_project, "reports/neutral_eval.jsonl")
+    probe = rows(built_project, "reports/sft_recall_probe.jsonl")
+    held_chunks = set(split["cpt_validation_chunk_ids"])
+    assert split["sft_validation_ids"] and held_chunks
+    for item in [r for r in evaluation if r["tier"] == "fact_holdout"] + neutral + probe:
+        needed = {e["chunk_id"] for e in item["evidence"]} | set(item.get("cpt_support", []))
+        if item.get("reassigned_from"):
+            needed = set(item["cpt_support"])
+        assert not needed & held_chunks, item["id"]
+    assert not {r["fact_id"] for r in neutral + probe} & set(split["sft_validation_fact_ids"])
+
+
+def test_neutral_tier_is_trained_on_both_sides_and_above_the_constant_floor(built_project):
+    neutral = rows(built_project, "reports/neutral_eval.jsonl")
+    sft = rows(built_project, "outputs/sft.jsonl")
+    trained = {r["metadata"]["fact_id"] for r in sft}
+    asked = {normalize_question(r["messages"][0]["content"]) for r in sft}
+    assert neutral and all(r["diagnostic_only"] and r["fact_id"] in trained for r in neutral)
+    assert not asked & {normalize_question(r["question"]) for r in neutral}
+    assert not {r["fact_id"] for r in neutral} & {r["fact_id"] for r in rows(built_project, "outputs/eval.jsonl")}
+    floor = json.loads((built_project / "reports/constant_baseline.json").read_text())["sets"]
+    assert floor["neutral"]["passed"]["question_echo_plus_generic"] == 0
+    assert floor["fact_holdout"]["answerable_rows"] == sum(r["tier"] == "fact_holdout" for r in rows(built_project, "outputs/eval.jsonl"))

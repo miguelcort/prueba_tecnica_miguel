@@ -6,6 +6,7 @@ from statistics import mean
 from typing import Dict, Iterable, List
 
 from ..common import Config, PipelineError, iter_jsonl, read_json, require, write_json
+from ..evaluation.auxiliary import constant_answers, passes_constant
 from ..validation.validate import run as validate
 
 
@@ -37,12 +38,29 @@ def project_split_viability(facts: List[dict], holdout: dict) -> dict:
     }
 
 
+def constant_baseline(rows_by_set: Dict[str, List[dict]], generic: List[str]) -> dict:
+    """What a model that learned nothing scores with the factual accuracy rule. Rows are per set."""
+    result: Dict[str, dict] = {}
+    for name, rows in rows_by_set.items():
+        answerable = [row for row in rows if row["key_facts"]]
+        variants = sorted(constant_answers({"question": ""}, generic))
+        passed = {variant: [row for row in answerable if passes_constant(row, constant_answers(row, generic)[variant])] for variant in variants}
+        result[name] = {
+            "answerable_rows": len(answerable),
+            "passed": {variant: len(rows_passed) for variant, rows_passed in passed.items()},
+            "passed_percent": {variant: round(100 * len(rows_passed) / max(len(answerable), 1), 1) for variant, rows_passed in passed.items()},
+            "floor_fact_ids": sorted({row["fact_id"] for rows_passed in passed.values() for row in rows_passed}),
+        }
+    return result
+
+
 def run(config: Config) -> dict:
     processed = config.processed
     require(config.output("cpt"), config.output("sft"), config.output("eval"), processed("curation_stats.json"))
     reports = config.path("reports_dir")
     cpt, sft, evaluation = (list(iter_jsonl(config.output(name))) for name in ("cpt", "sft", "eval"))
     probe = list(iter_jsonl(reports / "sft_recall_probe.jsonl"))
+    neutral = list(iter_jsonl(reports / "neutral_eval.jsonl"))
     facts = list(iter_jsonl(processed("facts.jsonl")))
     ingestion, curation = read_json(processed("ingestion_stats.json")), read_json(processed("curation_stats.json"))
     sft_stats, eval_stats = read_json(processed("sft_stats.json")), read_json(processed("evaluation_stats.json"))
@@ -58,9 +76,13 @@ def run(config: Config) -> dict:
         "sft": {"rows": len(sft), "avg_question_chars": _average(len(r["messages"][0]["content"]) for r in sft), "avg_answer_chars": _average(len(r["messages"][1]["content"]) for r in sft), "by_project": _count(sft, meta("project")), "by_category": _count(sft, meta("category")), "by_difficulty": _count(sft, meta("difficulty")), "by_generation_method": _count(sft, meta("generation_method")), "by_language": _count(sft, meta("language"))},
         "eval": {"rows": len(evaluation), "by_tier": _count(evaluation, lambda r: r["tier"]), "by_project": _count(evaluation, lambda r: r["project"]), "by_category": _count(evaluation, lambda r: r["category"]), "by_difficulty": _count(evaluation, lambda r: r["difficulty"]), "by_behavior": _count(evaluation, lambda r: r["expected_behavior"]), "by_language": _count(evaluation, lambda r: r["language"])},
         "sft_recall_probe": {"rows": len(probe), "note": "diagnostic only, not part of the leakage-free evaluation"},
+        "neutral_eval": {"rows": len(neutral), "by_project": _count(neutral, lambda r: r["project"]), "note": "facts taught by both CPT and SFT, under an unseen wording; not part of the leakage-free evaluation"},
         "chunks": {"total": curation["chunks"], "by_usage": curation["chunks_by_usage"]},
     }
     write_json(reports / "dataset_statistics.json", statistics)
+    by_set = {tier: [row for row in evaluation if row["tier"] == tier] for tier in ("fact_holdout", "document_holdout")}
+    baseline = constant_baseline({**by_set, "all_answerable": by_set["fact_holdout"] + by_set["document_holdout"], "neutral": neutral, "sft_recall_probe": probe}, config["evaluation"]["generic_keys"])
+    write_json(reports / "constant_baseline.json", {"note": "Fixed answers scored with key_facts and must_not_contain. No model was run. This is a floor, not a result: key_facts can pass an answer that is wrong.", "sets": baseline})
 
     rejected_total = sum(curation["documents_rejected"].values())
     quality = {
@@ -89,7 +111,7 @@ def run(config: Config) -> dict:
         {
             "passed": not validation["errors"].get("leakage"),
             "counts": validation["leakage"],
-            "reading_guide": "fact_holdout answers are in CPT by design: that tier measures transfer from CPT. Partial key overlap means one key fact, not the whole answer, also appears in an SFT answer. High Jaccard with other identifiers means the same template about another subject.",
+            "reading_guide": "fact_holdout answers are in CPT by design: that tier measures transfer from CPT. Overlap is compared per project, by whole token, ignoring evaluation.generic_keys. document_holdout_evidence_partly_trained rows keep a key out of training, so they test retrieval, but closed-book behavior is not scored on them. Partial key overlap means one key fact, not the whole answer, also appears in an SFT answer. High Jaccard with other identifiers means the same template about another subject.",
             "held_out_documents": holdout["source_files"],
             "project_split_viability": project_split_viability(facts, holdout),
         },
@@ -114,6 +136,7 @@ def run(config: Config) -> dict:
             ("SFT validated percent", sft_stats["validated_percent"]),
             ("Evaluation questions", len(evaluation)),
             ("Recall probe rows (diagnostic)", len(probe)),
+            ("Neutral tier rows (taught by CPT and SFT)", len(neutral)),
             ("Provenance valid percent", validation["provenance_valid_percent"]),
         ],
         ("Metric", "Value"),

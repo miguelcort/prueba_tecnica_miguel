@@ -58,7 +58,14 @@ evaluation:
   max_items_per_holdout_document: 12
   question_jaccard_threshold: 0.8  # with equal identifiers, above this two questions are one
   answer_jaccard_threshold: 0.8
-  min_specific_key_chars: 12       # a shorter key alone (`int`) proves no overlap
+  # Keys too common to prove that a text teaches an answer: data types, HTTP verbs and status codes.
+  # They are ignored only when comparing against training text, and never removed from key_facts.
+  # A row with nothing but these keys cannot be proven to overlap, and the constant baseline
+  # (reports/constant_baseline.json) reports what they let a fixed answer pass.
+  generic_keys: [string, int, integer, bigint, boolean, timestamp, date, json, "true", "false", "null", GET, POST, PUT, PATCH, DELETE, "200", "201", "204", "400", "401", "403", "404", "500"]
+
+training:
+  validation_fraction: 0.1  # per project, see reports/training_validation_split.json
 
 validation:
   min_cpt_chars: 40
