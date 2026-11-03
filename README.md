@@ -4,6 +4,8 @@ Convierte 107 archivos de documentación técnica de 10 proyectos (`docs_raw/`) 
 
 **Video explicativo (1920×1080, en español):** [docs/video/explainer.mp4](docs/video/explainer.mp4)
 
+> **Aclaración:** el video se generó antes de corregir la evaluación y muestra cifras anteriores: 89 preguntas (39 `fact_holdout`, 27 `document_holdout`, 23 `unanswerable`) y 10 preguntas con un dato parcial compartido con SFT. Las cifras vigentes son 88 preguntas (42 `fact_holdout`, 23 `document_holdout`, 23 `unanswerable`) y 18 preguntas con un dato parcial compartido. Las demás cifras del video siguen vigentes.
+
 ## Requisitos
 
 - Python 3.9 o superior, con `pip` y `venv`.
